@@ -27,7 +27,7 @@
   }
 
   /* ============================================
-     ИНТРО — ЗАГРУЗКА В СТИЛЕ WARHAMMER 40,000
+     ИНТРО
      ============================================ */
   #intro {
     position: fixed;
@@ -44,7 +44,6 @@
   }
   #intro.hidden { opacity: 0; pointer-events: none; }
 
-  /* Курсор вверху */
   #introCursor {
     position: absolute;
     top: 60px;
@@ -64,7 +63,6 @@
     50%, 100% { opacity: 0; }
   }
 
-  /* Контент загрузки */
   #introContent {
     width: 100%;
     max-width: 780px;
@@ -117,7 +115,6 @@
   .intro-log .error { color: #c92222; text-shadow: 0 0 10px #ff0000; }
   .intro-log .info { color: #7a6a3a; }
 
-  /* Прогресс-бар */
   .intro-progress-wrap {
     margin-top: 25px;
     padding: 0 20px;
@@ -156,7 +153,6 @@
       rgba(0,0,0,0.3) 6px, rgba(0,0,0,0.3) 12px);
   }
 
-  /* Финальный текст интро */
   #introFinal {
     text-align: center;
     opacity: 0;
@@ -187,7 +183,6 @@
     50% { text-shadow: 0 0 40px #c9a227, 0 0 80px #ff0000, 0 0 120px #ff0000; }
   }
 
-  /* Сканлайны поверх интро */
   #intro::after {
     content: '';
     position: absolute;
@@ -202,7 +197,7 @@
   }
 
   /* ============================================
-     ОСНОВНАЯ СТРАНИЦА
+     ОСНОВНАЯ
      ============================================ */
   #pageContent {
     opacity: 0;
@@ -210,7 +205,6 @@
   }
   #pageContent.show { opacity: 1; }
 
-  /* === ВЕРХНИЙ БАР === */
   .topbar {
     position: relative;
     z-index: 100;
@@ -250,7 +244,6 @@
     text-shadow: 0 0 10px #c9a227;
   }
 
-  /* === ОСНОВНОЙ КОНТЕНТ === */
   .main {
     position: relative; z-index: 5; display: grid;
     grid-template-columns: 400px 1fr 300px; gap: 25px;
@@ -281,7 +274,6 @@
   .main.mode-chronos .panel-title { font-size: 20px; letter-spacing: 6px; padding-bottom: 18px; }
   .main.mode-chronos .heresy { font-size: 14px; margin-top: 30px; letter-spacing: 6px; }
 
-  /* === ПАНЕЛИ === */
   .panel {
     background: linear-gradient(145deg, rgba(12,8,4,0.92) 0%, rgba(30,18,8,0.88) 100%);
     border: 2px solid #4a1508; border-radius: 3px; padding: 20px;
@@ -302,7 +294,6 @@
     border-bottom: 1px solid #4a1508; text-shadow: 0 0 8px #8b0000;
   }
 
-  /* === ПЛЕЕР === */
   .radio-player { grid-column: 1; align-self: start; position: sticky; top: 90px; }
 
   .player-display {
@@ -327,15 +318,6 @@
   }
 
   @keyframes flicker { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-  .station-select {
-    width: 100%; padding: 10px; background: #050302; color: #b08c2e;
-    border: 1px solid #4a1508; font-family: inherit; font-size: 12px;
-    letter-spacing: 1px; cursor: pointer; outline: none; margin-bottom: 12px;
-  }
-  .station-select:focus { border-color: #c9a227; box-shadow: 0 0 12px rgba(139,0,0,0.6); }
-  .station-select optgroup { color: #8b0000; font-weight: bold; font-size: 11px; }
-  .station-select option { color: #b08c2e; background: #050302; padding: 4px; }
 
   .player-controls { display: flex; gap: 10px; }
 
@@ -370,7 +352,6 @@
     border: 2px solid #8b0000; cursor: pointer; box-shadow: 0 0 8px rgba(201,162,39,0.6);
   }
 
-  /* === АУДИОВИЗУАЛИЗАТОР === */
   .viz-panel { margin-top: 15px; }
   .viz-container {
     position: relative; width: 100%; aspect-ratio: 1;
@@ -402,7 +383,6 @@
   }
   .viz-label.active { color: #c9a227; text-shadow: 0 0 10px #8b0000; animation: flicker 2s infinite; }
 
-  /* === ЦЕНТР === */
   .center-panel {
     grid-column: 2; text-align: center; padding: 40px 30px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -470,7 +450,6 @@
   .auto-toggle:hover { color: #c9a227; text-shadow: 0 0 8px #8b0000; }
   .auto-toggle.active { color: #c9a227; text-shadow: 0 0 8px #8b0000; animation: flicker 2s infinite; }
 
-  /* === ЧАСЫ === */
   .clock-panel { grid-column: 3; align-self: start; position: sticky; top: 90px; text-align: center; }
 
   .clock-time {
@@ -498,9 +477,6 @@
     letter-spacing: 3px; text-transform: uppercase; animation: flicker 4s infinite;
   }
 
-  /* ============================================
-     ПОДВАЛ — ПОДПИСЬ
-     ============================================ */
   .footer {
     position: relative;
     z-index: 5;
@@ -566,7 +542,6 @@
     background: linear-gradient(90deg, transparent, #4a1508, transparent);
   }
 
-  /* === Адаптив === */
   @media (max-width: 1100px) {
     .main { grid-template-columns: 1fr; }
     .radio-player, .clock-panel { position: static; }
@@ -592,9 +567,6 @@
 </head>
 <body>
 
-<!-- ============================================
-     ИНТРО — ЗАГРУЗКА
-     ============================================ -->
 <div id="intro">
   <div id="introCursor">▮</div>
 
@@ -621,9 +593,6 @@
   </div>
 </div>
 
-<!-- ============================================
-     ОСНОВНАЯ СТРАНИЦА
-     ============================================ -->
 <div id="pageContent">
 
   <header class="topbar">
@@ -646,60 +615,6 @@
         <div class="display-status" id="statusText">SIGNAL OFFLINE</div>
       </div>
 
-      <select class="station-select" id="stationSelect">
-        <option value="">⚙ Select frequency ⚙</option>
-        <optgroup label="── AMBIENT / DOWNTEMPO ──">
-          <option value="https://ice2.somafm.com/groovesalad-128-mp3">Groove Salad</option>
-          <option value="https://ice2.somafm.com/dronezone-128-mp3">Drone Zone</option>
-          <option value="https://ice2.somafm.com/deepspaceone-128-mp3">Deep Space One</option>
-          <option value="https://ice2.somafm.com/spacestation-128-mp3">Space Station Soma</option>
-          <option value="https://ice2.somafm.com/synphaera-128-mp3">Synphaera Radio</option>
-          <option value="https://ice2.somafm.com/thedarkzone-128-mp3">The Dark Zone</option>
-          <option value="https://ice2.somafm.com/doomed-128-mp3">Doomed</option>
-          <option value="https://ice2.somafm.com/n5md-128-mp3">n5MD Radio</option>
-        </optgroup>
-        <optgroup label="── ELECTRONIC / IDM ──">
-          <option value="https://ice2.somafm.com/defcon-128-mp3">DEF CON Radio</option>
-          <option value="https://ice2.somafm.com/beatblender-128-mp3">Beat Blender</option>
-          <option value="https://ice2.somafm.com/cliqhop-128-mp3">cliqhop idm</option>
-          <option value="https://ice2.somafm.com/dubstep-128-mp3">Dub Step Beyond</option>
-          <option value="https://ice2.somafm.com/fluid-128-mp3">Fluid</option>
-          <option value="https://ice2.somafm.com/trip-128-mp3">The Trip</option>
-          <option value="https://ice2.somafm.com/poptron-128-mp3">PopTron</option>
-          <option value="https://ice2.somafm.com/vaporwaves-128-mp3">Vaporwaves</option>
-          <option value="https://ice2.somafm.com/digitalis-128-mp3">Digitalis</option>
-        </optgroup>
-        <optgroup label="── LOUNGE / JAZZ ──">
-          <option value="https://ice2.somafm.com/secretagent-128-mp3">Secret Agent</option>
-          <option value="https://ice2.somafm.com/illstreet-128-mp3">Illinois Street Lounge</option>
-          <option value="https://ice2.somafm.com/lush-128-mp3">Lush</option>
-          <option value="https://ice2.somafm.com/sonicuniverse-128-mp3">Sonic Universe</option>
-          <option value="https://ice2.somafm.com/bossa-128-mp3">Bossa Beyond</option>
-          <option value="https://ice2.somafm.com/tikitime-128-mp3">Tiki Time</option>
-          <option value="https://ice2.somafm.com/seveninch-128-mp3">Seven Inch Soul</option>
-        </optgroup>
-        <optgroup label="── ROCK / METAL ──">
-          <option value="https://ice2.somafm.com/indiepop-128-mp3">Indie Pop Rocks!</option>
-          <option value="https://ice2.somafm.com/u80s-128-mp3">Underground 80s</option>
-          <option value="https://ice2.somafm.com/leftcoast-128-mp3">Left Coast 70s</option>
-          <option value="https://ice2.somafm.com/metal-128-mp3">Metal Detector</option>
-          <option value="https://ice2.somafm.com/blackrock-128-mp3">Black Rock FM</option>
-          <option value="https://ice2.somafm.com/folkfwd-128-mp3">Folk Forward</option>
-          <option value="https://ice2.somafm.com/insound-128-mp3">The In-Sound</option>
-        </optgroup>
-        <optgroup label="── WORLD / OTHER ──">
-          <option value="https://ice2.somafm.com/suburbsofgoa-128-mp3">Suburbs of Goa</option>
-          <option value="https://ice2.somafm.com/bootliquor-128-mp3">Boot Liquor</option>
-          <option value="https://ice2.somafm.com/thistle-128-mp3">ThistleRadio</option>
-          <option value="https://ice2.somafm.com/reggae-128-mp3">Heavyweight Reggae</option>
-          <option value="https://ice2.somafm.com/missioncontrol-128-mp3">Mission Control</option>
-          <option value="https://ice2.somafm.com/covers-128-mp3">Covers</option>
-          <option value="https://ice2.somafm.com/specials-128-mp3">SomaFM Specials</option>
-          <option value="https://ice2.somafm.com/live-128-mp3">SomaFM Live</option>
-          <option value="https://ice2.somafm.com/chillits-128-mp3">Chillits Radio</option>
-        </optgroup>
-      </select>
-
       <div class="player-controls">
         <button class="ctrl-btn" id="playBtn">▶ PLAY</button>
         <button class="ctrl-btn" id="stopBtn">■ STOP</button>
@@ -712,9 +627,8 @@
 
       <div class="viz-panel">
       <div class="viz-container">
-        <!-- ВАЖНО: положи файл aquila.jpg рядом с этим HTML или замени src на base64 -->
         <img id="aquilaImg" src="https://i.pinimg.com/236x/cf/dc/25/cfdc251f5156fefe312ec76354447416.jpg" alt="Aquila Imperium"
-             onerror="this.style.opacity='0.15';this.alt='⚠ Положи aquila.jpg рядом с index.html';">
+             onerror="this.style.opacity='0.15';this.alt='⚠ Изображение недоступно';">
         <canvas id="aquilaCanvas"></canvas>
       </div>
       <div class="viz-label" id="vizLabel">◈ AQUILA VISUALIZER OFFLINE ◈</div>
@@ -755,9 +669,6 @@
 
   </main>
 
-  <!-- ============================================
-       ПОДВАЛ — ПОДПИСЬ
-       ============================================ -->
   <footer class="footer">
     <div class="footer-aquila">🦅 ⚙ 🦅</div>
     <div class="footer-main">40М 2026</div>
@@ -780,8 +691,8 @@ const INTRO_LOGS = [
   { text: '> [SCAN] Сканирование частот Варпа...', cls: 'info', delay: 2400 },
   { text: '> [WARN] Обнаружены нечестивые сигнатуры в секторе 7-G', cls: 'warn', delay: 3000 },
   { text: '> [OK] Аура Геллера активирована', cls: 'ok', delay: 3600 },
-  { text: '> [SCAN] Сканирование эфира SomaFM...', cls: 'info', delay: 4300 },
-  { text: '> [OK] Найдено 38 активных каналов', cls: 'ok', delay: 4900 },
+  { text: '> [SCAN] Поиск источников звука...', cls: 'info', delay: 4300 },
+  { text: '> [OK] Найден Warhammer.mp3', cls: 'ok', delay: 4900 },
   { text: '> [LOAD] Загрузка Аквилы Империума...', cls: 'info', delay: 5600 },
   { text: '> [OK] Священный орёл отрисован', cls: 'ok', delay: 6200 },
   { text: '> [LOAD] Развёртывание визуализатора Вокс...', cls: 'info', delay: 6900 },
@@ -812,19 +723,16 @@ const introPhase = document.getElementById('introPhase');
 const introFinal = document.getElementById('introFinal');
 const pageContent = document.getElementById('pageContent');
 
-/* --- Фаза 1: пустой чёрный экран 3 сек, потом курсор --- */
 setTimeout(() => {
   introCursor.classList.add('show');
 }, 3000);
 
-/* --- Фаза 2: через 2 сек после курсора (итого 5 сек) начинается загрузка --- */
 setTimeout(() => {
   introContent.classList.add('show');
   runIntroLogs();
   runProgressBar();
 }, 5000);
 
-/* --- Логи интро по строкам --- */
 function runIntroLogs() {
   INTRO_LOGS.forEach(item => {
     setTimeout(() => {
@@ -832,17 +740,12 @@ function runIntroLogs() {
       line.className = 'line ' + item.cls;
       line.textContent = item.text;
       introLog.appendChild(line);
-
-      // Плавное появление
       requestAnimationFrame(() => line.classList.add('show'));
-
-      // Прокрутка вниз
       introLog.scrollTop = introLog.scrollHeight;
     }, item.delay);
   });
 }
 
-/* --- Прогресс-бар за 20 секунд --- */
 function runProgressBar() {
   const totalDuration = 20000;
   const startTime = Date.now();
@@ -875,7 +778,6 @@ function runProgressBar() {
   }, 100);
 }
 
-/* --- Финал интро: показать AVE IMPERATOR, потом страницу --- */
 function finishIntro() {
   setTimeout(() => {
     introContent.style.opacity = '0';
@@ -888,7 +790,6 @@ function finishIntro() {
         intro.classList.add('hidden');
         pageContent.classList.add('show');
 
-        // Удаляем интро из DOM после исчезновения
         setTimeout(() => {
           intro.remove();
         }, 1200);
@@ -1140,10 +1041,12 @@ quoteCounter.textContent = '1 / ' + uniqueQuotes.length;
 displayQuote(0);
 
 /* ============ ПЛЕЕР ============ */
+const AUDIO_URL = 'Warhammer.mp3';
+
 const audio = new Audio();
 audio.volume = 0.7;
+audio.loop = true;
 
-const select = document.getElementById('stationSelect');
 const playBtn = document.getElementById('playBtn');
 const stopBtn = document.getElementById('stopBtn');
 const volumeSlider = document.getElementById('volumeSlider');
@@ -1153,15 +1056,9 @@ const stationLabel = document.getElementById('stationLabel');
 const vizLabel = document.getElementById('vizLabel');
 
 let isPlaying = false;
-let metadataInterval = null;
 
 function startPlayback() {
-  if (!select.value) {
-    statusText.textContent = '⚠ SELECT FREQUENCY';
-    trackName.textContent = '— NO SIGNAL —';
-    return;
-  }
-  audio.src = select.value;
+  audio.src = AUDIO_URL;
   audio.load();
   const playPromise = audio.play();
   if (playPromise !== undefined) {
@@ -1169,11 +1066,12 @@ function startPlayback() {
       isPlaying = true;
       playBtn.textContent = '❚❚ PAUSE';
       statusText.textContent = '◈ TRANSMITTING ◈';
-      stationLabel.textContent = select.options[select.selectedIndex].text.toUpperCase();
-      trackName.textContent = '◈ ACQUIRING SIGNAL...';
+      stationLabel.textContent = 'WARHAMMER AUDIO';
+      trackName.textContent = '◈ WARHAMMER ◈';
       vizLabel.classList.add('active');
       vizLabel.textContent = '◈ AQUILA VISUALIZER ACTIVE ◈';
-    }).catch(() => {
+    }).catch((err) => {
+      console.warn('Ошибка воспроизведения:', err);
       statusText.textContent = '⚠ SIGNAL BLOCKED';
       trackName.textContent = '— CONNECTION FAILED —';
     });
@@ -1182,8 +1080,7 @@ function startPlayback() {
 
 function stopPlayback() {
   audio.pause();
-  audio.src = '';
-  audio.load();
+  audio.currentTime = 0;
   isPlaying = false;
   playBtn.textContent = '▶ PLAY';
   statusText.textContent = 'SIGNAL OFFLINE';
@@ -1200,20 +1097,21 @@ playBtn.addEventListener('click', () => {
     playBtn.textContent = '▶ PLAY';
     statusText.textContent = '◈ SIGNAL PAUSED ◈';
   } else {
-    startPlayback();
+    if (!audio.src) {
+      startPlayback();
+    } else {
+      audio.play().then(() => {
+        isPlaying = true;
+        playBtn.textContent = '❚❚ PAUSE';
+        statusText.textContent = '◈ TRANSMITTING ◈';
+      }).catch((err) => {
+        console.warn('Ошибка возобновления:', err);
+      });
+    }
   }
 });
 
 stopBtn.addEventListener('click', stopPlayback);
-
-select.addEventListener('change', () => {
-  if (isPlaying) {
-    startPlayback();
-  } else {
-    statusText.textContent = '◈ FREQUENCY SET ◈';
-    stationLabel.textContent = select.options[select.selectedIndex].text.toUpperCase();
-  }
-});
 
 volumeSlider.addEventListener('input', () => {
   audio.volume = volumeSlider.value / 100;
@@ -1356,65 +1254,6 @@ function animateViz() {
 
 animateViz();
 
-/* ============ ICY METADATA ============ */
-async function fetchStreamTitle(streamUrl) {
-  try {
-    const response = await fetch(streamUrl, { headers: { 'Icy-MetaData': '1' } });
-    if (!response.ok) throw new Error('Stream unreachable');
-    const metaInt = response.headers.get('icy-metaint');
-    if (!metaInt) throw new Error('No ICY metadata');
-
-    const reader = response.body.getReader();
-    let metadataBuffer = new Uint8Array(0);
-    let foundTitle = null;
-    let chunkCount = 0;
-
-    while (chunkCount < 50 && !foundTitle) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunkCount++;
-
-      const combined = new Uint8Array(metadataBuffer.length + value.length);
-      combined.set(metadataBuffer);
-      combined.set(value, metadataBuffer.length);
-      metadataBuffer = combined;
-
-      const metaIntNum = parseInt(metaInt, 10);
-      while (metadataBuffer.length >= metaIntNum + 1 && !foundTitle) {
-        const lengthByte = metadataBuffer[metaIntNum];
-        const metaLength = lengthByte * 16;
-        if (metadataBuffer.length >= metaIntNum + 1 + metaLength) {
-          const metadataChunk = metadataBuffer.slice(metaIntNum + 1, metaIntNum + 1 + metaLength);
-          const metaString = new TextDecoder('utf-8').decode(metadataChunk);
-          const match = metaString.match(/StreamTitle='([^']*)'/);
-          if (match && match[1]) foundTitle = match[1];
-          metadataBuffer = metadataBuffer.slice(metaIntNum + 1 + metaLength);
-        } else break;
-      }
-    }
-    reader.cancel();
-    return foundTitle;
-  } catch (e) { return null; }
-}
-
-function startMetadataPolling() {
-  if (metadataInterval) clearInterval(metadataInterval);
-  metadataInterval = setInterval(async () => {
-    if (!isPlaying || !select.value) return;
-    const title = await fetchStreamTitle(select.value);
-    if (title) {
-      trackName.textContent = title;
-      statusText.textContent = '◈ LIVE ◈';
-    } else {
-      trackName.textContent = '◈ IN THE GRIM DARKNESS ◈';
-    }
-  }, 10000);
-}
-
-audio.addEventListener('play', startMetadataPolling);
-audio.addEventListener('pause', () => {
-  if (metadataInterval) { clearInterval(metadataInterval); metadataInterval = null; }
-});
 audio.addEventListener('error', () => {
   statusText.textContent = '⚠ SIGNAL LOST';
   trackName.textContent = '— CONNECTION FAILED —';

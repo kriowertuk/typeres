@@ -3,867 +3,1426 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Snow Queen</title>
+<title>+++ IMPERIUM BROADCAST SYSTEM +++</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow: hidden; }
+  html, body { height: 100%; }
+
   body {
-    font-family: 'Times New Roman', serif;
-    background: #000;
-    color: #d8e4f0;
+    font-family: 'Times New Roman', 'Cinzel', serif;
+    color: #c9a227;
+    background: #000 url('https://warhammergames.ru/_pu/4/41415030.jpg') center/cover fixed no-repeat;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.92) 100%);
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* ============================================
-     ЭКРАН СТАРТА (клик для запуска)
+     ИНТРО — ЗАГРУЗКА В СТИЛЕ WARHAMMER 40,000
      ============================================ */
-  #startScreen {
-    position: fixed; inset: 0;
+  #intro {
+    position: fixed;
+    inset: 0;
     background: #000;
-    z-index: 10000;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: opacity 1s ease;
     padding: 30px;
-  }
-  #startScreen.hidden { opacity: 0; pointer-events: none; }
-
-  .start-aquila {
-    font-size: 60px;
-    color: #4a7aa5;
-    text-shadow:
-      0 0 30px rgba(120, 180, 240, 0.8),
-      0 0 60px rgba(80, 140, 200, 0.5);
-    margin-bottom: 40px;
-    letter-spacing: 20px;
-    animation: pulseGlow 3s infinite;
-  }
-  @keyframes pulseGlow {
-    0%, 100% {
-      text-shadow: 0 0 30px rgba(120,180,240,0.8), 0 0 60px rgba(80,140,200,0.5);
-    }
-    50% {
-      text-shadow: 0 0 50px rgba(180,220,255,1), 0 0 100px rgba(120,180,240,0.7), 0 0 140px rgba(80,140,200,0.5);
-    }
-  }
-
-  .start-title {
-    font-size: 48px;
-    letter-spacing: 16px;
-    color: #e8f0f8;
-    text-shadow: 0 0 20px rgba(180, 220, 255, 0.6), 0 0 40px rgba(120, 180, 240, 0.4);
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    text-align: center;
-  }
-
-  .start-sub {
     font-family: 'Courier New', monospace;
-    font-size: 12px;
-    letter-spacing: 6px;
-    color: #a8c0d8;
-    text-transform: uppercase;
-    margin-bottom: 60px;
-    text-align: center;
-  }
-
-  .start-hint {
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    letter-spacing: 5px;
-    color: #607a95;
-    text-transform: uppercase;
-    padding: 18px 40px;
-    border: 1px solid rgba(120, 180, 240, 0.4);
-    background: rgba(10, 20, 30, 0.5);
-    animation: hintBlink 2s ease-in-out infinite;
-    backdrop-filter: blur(6px);
-  }
-  @keyframes hintBlink {
-    0%, 100% { opacity: 0.6; box-shadow: 0 0 15px rgba(120, 180, 240, 0.3); }
-    50% { opacity: 1; box-shadow: 0 0 30px rgba(120, 180, 240, 0.6); }
-  }
-
-  .start-author {
-    font-family: 'Courier New', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: #405a70;
-    text-transform: uppercase;
-    margin-top: 40px;
-  }
-
-  /* ============================================
-     ИНТРО
-     ============================================ */
-  #intro {
-    position: fixed; inset: 0;
-    background: #000;
-    z-index: 9999;
-    overflow: hidden;
-    transition: opacity 1.2s ease;
+    transition: opacity 1s ease;
   }
   #intro.hidden { opacity: 0; pointer-events: none; }
 
-  #bgLayer {
-    position: absolute; inset: -5%;
-    background: #0a1218 url('bg.jpg') center/cover no-repeat;
-    opacity: 0;
-    transition: opacity 3s ease;
-    filter: brightness(0.7) contrast(1.05) saturate(0.9);
-    animation: bgDrift 40s ease-in-out infinite alternate;
-  }
-  #bgLayer.show { opacity: 1; }
-  @keyframes bgDrift {
-    0% { transform: scale(1.05) translate(0, 0); }
-    100% { transform: scale(1.12) translate(-2%, -1%); }
-  }
-  #bgLayer::after {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.85) 100%),
-      linear-gradient(180deg, rgba(0,10,20,0.5) 0%, transparent 40%, transparent 60%, rgba(0,5,10,0.7) 100%);
-    pointer-events: none;
-  }
-
-  #snowCanvas {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  #introTitles {
+  /* Курсор вверху */
+  #introCursor {
     position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 3;
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    pointer-events: none;
-    text-align: center;
-    padding: 20px;
-  }
-  #introTitles.show { opacity: 1; }
-
-  .title-main {
-    font-size: 64px;
-    letter-spacing: 20px;
-    color: #e8f0f8;
-    text-shadow:
-      0 0 20px rgba(180, 220, 255, 0.6),
-      0 0 40px rgba(120, 180, 240, 0.4),
-      0 0 60px rgba(60, 120, 200, 0.3);
-    text-transform: uppercase;
-    font-weight: normal;
-    animation: titlePulse 4s ease-in-out infinite;
-  }
-  @keyframes titlePulse {
-    0%, 100% { text-shadow: 0 0 20px rgba(180,220,255,0.6), 0 0 40px rgba(120,180,240,0.4); }
-    50% { text-shadow: 0 0 30px rgba(220,240,255,0.9), 0 0 60px rgba(120,180,240,0.6), 0 0 90px rgba(60,120,200,0.4); }
-  }
-
-  .title-sub {
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    letter-spacing: 8px;
-    color: #a8c0d8;
-    margin-top: 20px;
-    text-shadow: 0 0 10px rgba(120, 180, 240, 0.4);
-    text-transform: uppercase;
-  }
-
-  .title-author {
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    letter-spacing: 5px;
-    color: #607a95;
-    margin-top: 40px;
-    text-transform: uppercase;
-  }
-  .title-author span {
-    color: #c0d8f0;
-    text-shadow: 0 0 12px rgba(120, 180, 240, 0.6);
-  }
-
-  #skipBtn {
-    position: absolute;
-    top: 25px;
-    right: 30px;
-    z-index: 10;
-    padding: 10px 20px;
-    background: rgba(10, 20, 30, 0.6);
-    border: 1px solid rgba(180, 220, 255, 0.4);
-    color: #d8e4f0;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    letter-spacing: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-transform: uppercase;
-    backdrop-filter: blur(4px);
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    color: #c9a227;
+    text-shadow: 0 0 15px #8b0000, 0 0 30px #ff0000;
     opacity: 0;
   }
-  #skipBtn.show { opacity: 1; }
-  #skipBtn:hover {
-    background: rgba(180, 220, 255, 0.15);
-    border-color: #d8e4f0;
-    color: #fff;
-    box-shadow: 0 0 20px rgba(180, 220, 255, 0.4);
+  #introCursor.show {
+    opacity: 1;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
   }
 
-  /* Прогресс-бар трека внизу */
-  #progressBar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 8;
+  /* Контент загрузки */
+  #introContent {
+    width: 100%;
+    max-width: 780px;
     opacity: 0;
     transition: opacity 0.5s ease;
   }
-  #progressBar.show { opacity: 1; }
-  #progressFill {
+  #introContent.show { opacity: 1; }
+
+  .intro-title {
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 8px;
+    color: #c9a227;
+    text-shadow: 0 0 20px #8b0000, 0 0 40px #ff0000;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    font-family: 'Times New Roman', serif;
+    font-weight: bold;
+  }
+
+  .intro-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8b0000, #c9a227, #8b0000, transparent);
+    margin: 20px 0;
+    box-shadow: 0 0 15px #8b0000;
+  }
+
+  .intro-log {
+    font-size: 14px;
+    line-height: 1.9;
+    color: #b08c2e;
+    min-height: 340px;
+    padding: 10px 20px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 6px rgba(201,162,39,0.4);
+  }
+
+  .intro-log .line {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    margin-bottom: 4px;
+  }
+  .intro-log .line.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .intro-log .ok { color: #6a9a3a; text-shadow: 0 0 8px #4a7a2a; }
+  .intro-log .warn { color: #d4a017; text-shadow: 0 0 8px #8b0000; }
+  .intro-log .error { color: #c92222; text-shadow: 0 0 10px #ff0000; }
+  .intro-log .info { color: #7a6a3a; }
+
+  /* Прогресс-бар */
+  .intro-progress-wrap {
+    margin-top: 25px;
+    padding: 0 20px;
+  }
+  .intro-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #7a6a3a;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .intro-progress-bar {
+    width: 100%;
+    height: 14px;
+    background: #0a0604;
+    border: 2px solid #4a1508;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 15px rgba(139,0,0,0.4);
+  }
+  .intro-progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #4a7aa5, #a8c0d8, #e8f0f8);
-    box-shadow: 0 0 10px rgba(180, 220, 255, 0.8);
-    transition: width 0.3s linear;
+    background: linear-gradient(90deg, #4a1508, #8b0000, #c9a227, #ffcc44);
+    box-shadow: 0 0 20px rgba(255, 200, 60, 0.7);
+    transition: width 0.4s ease;
+    position: relative;
+  }
+  .intro-progress-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 6px,
+      rgba(0,0,0,0.3) 6px, rgba(0,0,0,0.3) 12px);
+  }
+
+  /* Финальный текст интро */
+  #introFinal {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #introFinal.show { opacity: 1; }
+
+  .intro-final-title {
+    font-family: 'Times New Roman', serif;
+    font-size: 44px;
+    letter-spacing: 12px;
+    color: #c9a227;
+    text-shadow: 0 0 30px #8b0000, 0 0 60px #ff0000, 0 0 90px #ff0000;
+    text-transform: uppercase;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+  }
+  .intro-final-sub {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    letter-spacing: 6px;
+    color: #7a6a3a;
+    margin-top: 20px;
+    text-transform: uppercase;
+  }
+  @keyframes pulse {
+    0%, 100% { text-shadow: 0 0 30px #8b0000, 0 0 60px #ff0000; }
+    50% { text-shadow: 0 0 40px #c9a227, 0 0 80px #ff0000, 0 0 120px #ff0000; }
+  }
+
+  /* Сканлайны поверх интро */
+  #intro::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+      rgba(0,0,0,0.15) 0px,
+      rgba(0,0,0,0.15) 1px,
+      transparent 1px,
+      transparent 3px);
+    pointer-events: none;
+    z-index: 5;
   }
 
   /* ============================================
      ОСНОВНАЯ СТРАНИЦА
      ============================================ */
-  #mainSite {
-    position: fixed; inset: 0;
-    background: #0a1218 url('bg.jpg') center/cover no-repeat;
+  #pageContent {
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+  #pageContent.show { opacity: 1; }
+
+  /* === ВЕРХНИЙ БАР === */
+  .topbar {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 30px;
+    background: linear-gradient(180deg, rgba(15,10,5,0.97) 0%, rgba(35,20,8,0.88) 100%);
+    border-bottom: 3px solid #8b0000;
+    box-shadow: 0 0 25px rgba(139,0,0,0.7), inset 0 -2px 10px rgba(201,162,39,0.2);
+    position: sticky;
+    top: 0;
+  }
+
+  .logo {
+    font-size: 20px; font-weight: bold; color: #c9a227;
+    letter-spacing: 4px; text-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000;
+  }
+  .logo::before { content: '⚙ '; color: #8b0000; }
+  .logo::after  { content: ' ⚙'; color: #8b0000; }
+
+  .topbar-right { display: flex; align-items: center; gap: 18px; }
+
+  .nav-link {
+    color: #b08c2e; text-decoration: none; padding: 8px 16px;
+    border: 1px solid transparent; transition: all 0.3s; cursor: pointer;
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    background: none; font-family: inherit;
+  }
+  .nav-link:hover {
+    color: #ffd970; border: 1px solid #8b0000; background: rgba(139,0,0,0.3);
+    box-shadow: 0 0 15px rgba(139,0,0,0.7); text-shadow: 0 0 8px #c9a227;
+  }
+  .nav-link.active {
+    color: #ffd970; border: 1px solid #8b0000; background: rgba(139,0,0,0.4);
+    box-shadow: 0 0 20px rgba(139,0,0,0.8), inset 0 0 10px rgba(201,162,39,0.2);
+    text-shadow: 0 0 10px #c9a227;
+  }
+
+  /* === ОСНОВНОЙ КОНТЕНТ === */
+  .main {
+    position: relative; z-index: 5; display: grid;
+    grid-template-columns: 400px 1fr 300px; gap: 25px;
+    padding: 35px 25px; min-height: calc(100vh - 200px);
+    transition: all 0.4s ease;
+  }
+
+  .main.mode-home { grid-template-columns: 400px 1fr 300px; }
+  .main.mode-vox { grid-template-columns: 1fr; padding: 30px 60px; }
+  .main.mode-chronos { grid-template-columns: 1fr; padding: 30px 60px; }
+
+  .main.mode-vox .center-panel,
+  .main.mode-vox .clock-panel { display: none; }
+  .main.mode-chronos .center-panel,
+  .main.mode-chronos .radio-player { display: none; }
+
+  .main.mode-vox .radio-player {
+    width: 100%; max-width: 1100px; margin: 0 auto; position: static;
+  }
+  .main.mode-chronos .clock-panel {
+    width: 100%; max-width: 900px; margin: 0 auto; position: static; padding: 60px 40px;
+  }
+
+  .main.mode-chronos .clock-time { font-size: 140px; letter-spacing: 12px; margin: 30px 0; }
+  .main.mode-chronos .clock-seconds { font-size: 42px; letter-spacing: 6px; }
+  .main.mode-chronos .clock-date { font-size: 32px; letter-spacing: 6px; margin-top: 30px; }
+  .main.mode-chronos .clock-day { font-size: 20px; margin-top: 14px; letter-spacing: 4px; }
+  .main.mode-chronos .panel-title { font-size: 20px; letter-spacing: 6px; padding-bottom: 18px; }
+  .main.mode-chronos .heresy { font-size: 14px; margin-top: 30px; letter-spacing: 6px; }
+
+  /* === ПАНЕЛИ === */
+  .panel {
+    background: linear-gradient(145deg, rgba(12,8,4,0.92) 0%, rgba(30,18,8,0.88) 100%);
+    border: 2px solid #4a1508; border-radius: 3px; padding: 20px;
+    box-shadow: 0 0 30px rgba(139,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.8),
+      inset 0 0 2px rgba(201,162,39,0.3);
+    position: relative; transition: all 0.4s ease;
+  }
+
+  .panel::before, .panel::after {
+    content: ''; position: absolute; width: 12px; height: 12px; border: 2px solid #c9a227;
+  }
+  .panel::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .panel::after  { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+  .panel-title {
+    font-size: 14px; letter-spacing: 3px; text-transform: uppercase;
+    color: #c9a227; text-align: center; padding-bottom: 10px; margin-bottom: 15px;
+    border-bottom: 1px solid #4a1508; text-shadow: 0 0 8px #8b0000;
+  }
+
+  /* === ПЛЕЕР === */
+  .radio-player { grid-column: 1; align-self: start; position: sticky; top: 90px; }
+
+  .player-display {
+    background: #050302; border: 1px solid #4a1508;
+    padding: 15px; margin-bottom: 15px; position: relative; overflow: hidden;
+  }
+  .player-display::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+      rgba(201,162,39,0.03) 2px, rgba(201,162,39,0.03) 4px);
+    pointer-events: none;
+  }
+
+  .display-station { font-size: 11px; color: #7a6a3a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .display-name {
+    font-size: 18px; color: #ffcc44; text-shadow: 0 0 10px #ff6600, 0 0 20px #8b0000;
+    letter-spacing: 2px; min-height: 24px; line-height: 1.3;
+  }
+  .display-status {
+    font-size: 10px; color: #8b0000; letter-spacing: 3px;
+    margin-top: 8px; text-transform: uppercase; animation: flicker 3s infinite;
+  }
+
+  @keyframes flicker { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  .station-select {
+    width: 100%; padding: 10px; background: #050302; color: #b08c2e;
+    border: 1px solid #4a1508; font-family: inherit; font-size: 12px;
+    letter-spacing: 1px; cursor: pointer; outline: none; margin-bottom: 12px;
+  }
+  .station-select:focus { border-color: #c9a227; box-shadow: 0 0 12px rgba(139,0,0,0.6); }
+  .station-select optgroup { color: #8b0000; font-weight: bold; font-size: 11px; }
+  .station-select option { color: #b08c2e; background: #050302; padding: 4px; }
+
+  .player-controls { display: flex; gap: 10px; }
+
+  .ctrl-btn {
+    flex: 1; padding: 12px 8px;
+    background: linear-gradient(180deg, #3a0f08, #1a0503);
+    color: #c9a227; border: 2px solid #4a1508; font-family: inherit;
+    font-size: 12px; letter-spacing: 2px; cursor: pointer;
+    text-transform: uppercase; transition: all 0.3s;
+  }
+  .ctrl-btn:hover {
+    background: linear-gradient(180deg, #8b0000, #4a1508);
+    color: #ffd970; box-shadow: 0 0 20px rgba(139,0,0,0.8);
+    text-shadow: 0 0 10px #c9a227; border-color: #c9a227;
+  }
+  .ctrl-btn:active { transform: scale(0.97); }
+
+  .volume-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .volume-label { font-size: 10px; color: #7a6a3a; letter-spacing: 2px; text-transform: uppercase; }
+
+  .volume-slider {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 4px; background: #1a0503; border: 1px solid #4a1508; outline: none; cursor: pointer;
+  }
+  .volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
+    background: #c9a227; border: 2px solid #8b0000; cursor: pointer;
+    box-shadow: 0 0 8px rgba(201,162,39,0.6);
+  }
+  .volume-slider::-moz-range-thumb {
+    width: 14px; height: 14px; background: #c9a227;
+    border: 2px solid #8b0000; cursor: pointer; box-shadow: 0 0 8px rgba(201,162,39,0.6);
+  }
+
+  /* === АУДИОВИЗУАЛИЗАТОР === */
+  .viz-panel { margin-top: 15px; }
+  .viz-container {
+    position: relative; width: 100%; aspect-ratio: 1;
+    background: #050302; border: 1px solid #4a1508; overflow: hidden;
+  }
+  .viz-container::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+      rgba(201,162,39,0.04) 2px, rgba(201,162,39,0.04) 4px);
+    pointer-events: none; z-index: 3;
+  }
+  #aquilaImg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.5));
+    transition: filter 0.12s ease, transform 0.12s ease;
+    will-change: filter, transform;
+    z-index: 1;
+  }
+  #aquilaCanvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 2;
+  }
+  .viz-label {
+    text-align: center; font-size: 10px; letter-spacing: 3px;
+    color: #5a1a0a; margin-top: 8px; text-transform: uppercase;
+  }
+  .viz-label.active { color: #c9a227; text-shadow: 0 0 10px #8b0000; animation: flicker 2s infinite; }
+
+  /* === ЦЕНТР === */
+  .center-panel {
+    grid-column: 2; text-align: center; padding: 40px 30px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+
+  .center-title {
+    font-size: 36px; letter-spacing: 8px; color: #c9a227;
+    text-shadow: 0 0 20px #8b0000, 0 0 40px #8b0000, 0 0 60px #ff0000;
+    margin-bottom: 12px; text-transform: uppercase; animation: pulse 5s infinite;
+  }
+
+  .center-sub { font-size: 13px; letter-spacing: 6px; color: #7a6a3a; margin-bottom: 25px; }
+
+  .quote {
+    font-style: italic; font-size: 14px; color: #a88a3a; line-height: 1.9;
+    max-width: 600px; padding: 22px 25px; border-left: 2px solid #8b0000;
+    border-right: 2px solid #8b0000; background: rgba(0,0,0,0.45);
+    position: relative; transition: opacity 0.5s ease;
+    min-height: 130px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .quote.fading { opacity: 0; }
+
+  .quote::before {
+    content: '◆'; position: absolute; top: -8px; left: 50%;
+    transform: translateX(-50%); color: #8b0000; font-size: 14px;
+    background: #0a0604; padding: 0 8px;
+  }
+
+  .quote-text { margin-bottom: 10px; }
+  .quote-author {
+    font-size: 11px; color: #8b0000; letter-spacing: 3px;
+    font-style: normal; text-transform: uppercase;
+  }
+
+  .quote-nav { display: flex; gap: 12px; margin-top: 16px; align-items: center; }
+  .quote-nav button {
+    width: 36px; height: 36px; background: rgba(20,10,5,0.8);
+    color: #8b0000; border: 1px solid #4a1508; cursor: pointer;
+    font-size: 16px; transition: all 0.3s; font-family: inherit;
+  }
+  .quote-nav button:hover {
+    color: #ffd970; border-color: #c9a227;
+    background: rgba(139,0,0,0.4); box-shadow: 0 0 12px rgba(139,0,0,0.7);
+  }
+
+  .auto-indicator {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    font-size: 10px; color: #5a1a0a; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .progress-bar {
+    width: 120px; height: 3px; background: #1a0503;
+    border: 1px solid #4a1508; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, #8b0000, #c9a227);
+    width: 0%; transition: width 0.3s linear;
+    box-shadow: 0 0 8px rgba(201,162,39,0.6);
+  }
+  .auto-toggle {
+    background: none; border: none; color: #5a1a0a; cursor: pointer;
+    font-family: inherit; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; transition: all 0.3s; padding: 0;
+  }
+  .auto-toggle:hover { color: #c9a227; text-shadow: 0 0 8px #8b0000; }
+  .auto-toggle.active { color: #c9a227; text-shadow: 0 0 8px #8b0000; animation: flicker 2s infinite; }
+
+  /* === ЧАСЫ === */
+  .clock-panel { grid-column: 3; align-self: start; position: sticky; top: 90px; text-align: center; }
+
+  .clock-time {
+    font-family: 'Courier New', monospace; font-size: 52px; font-weight: bold;
+    color: #ffcc44; text-shadow: 0 0 10px #ff6600, 0 0 25px #8b0000, 0 0 40px #8b0000;
+    letter-spacing: 4px; margin: 12px 0; line-height: 1;
+  }
+  .clock-seconds {
+    font-family: 'Courier New', monospace; font-size: 20px;
+    color: #8b0000; text-shadow: 0 0 10px #ff3300; letter-spacing: 3px;
+  }
+  .clock-date {
+    font-size: 16px; letter-spacing: 3px; color: #c9a227;
+    margin-top: 16px; text-transform: uppercase; text-shadow: 0 0 8px #8b0000;
+  }
+  .clock-day { font-size: 12px; color: #7a6a3a; margin-top: 8px; letter-spacing: 2px; }
+
+  .divider {
+    height: 1px; background: linear-gradient(90deg, transparent, #8b0000, transparent);
+    margin: 16px 0; box-shadow: 0 0 10px #8b0000;
+  }
+
+  .heresy {
+    margin-top: 18px; font-size: 10px; color: #4a1508;
+    letter-spacing: 3px; text-transform: uppercase; animation: flicker 4s infinite;
+  }
+
+  /* ============================================
+     ПОДВАЛ — ПОДПИСЬ
+     ============================================ */
+  .footer {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    padding: 25px 20px 30px;
+    margin-top: 20px;
+    border-top: 2px solid #4a1508;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(15,8,3,0.85) 100%);
+    box-shadow: 0 -10px 30px rgba(139,0,0,0.3);
+  }
+
+  .footer-aquila {
+    font-size: 24px;
+    color: #8b0000;
+    text-shadow: 0 0 15px #c9a227, 0 0 25px #ff0000;
+    margin-bottom: 10px;
+    letter-spacing: 10px;
+    animation: flicker 6s infinite;
+  }
+
+  .footer-main {
+    font-family: 'Times New Roman', serif;
+    font-size: 18px;
+    letter-spacing: 6px;
+    color: #c9a227;
+    text-shadow: 0 0 12px #8b0000, 0 0 25px #8b0000;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .footer-sub {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #7a6a3a;
+    text-shadow: 0 0 8px rgba(139,0,0,0.6);
+    text-transform: uppercase;
+  }
+
+  .footer-sub .signature {
+    color: #c9a227;
+    text-shadow: 0 0 10px #8b0000;
+    font-weight: bold;
+  }
+
+  .footer-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    overflow: hidden;
-  }
-  #mainSite.show { opacity: 1; }
-  #mainSite::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: rgba(0, 10, 20, 0.75);
-    backdrop-filter: blur(4px);
-    z-index: 0;
-  }
-  .main-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 40px;
-    max-width: 800px;
-  }
-  .main-title {
-    font-size: 56px;
-    letter-spacing: 16px;
-    color: #e8f0f8;
-    text-shadow: 0 0 30px rgba(180, 220, 255, 0.5), 0 0 60px rgba(120, 180, 240, 0.3);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-  .main-sub {
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    letter-spacing: 6px;
-    color: #a8c0d8;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-  }
-  .main-info {
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    letter-spacing: 3px;
-    color: #607a95;
-    line-height: 2;
-    text-transform: uppercase;
-    padding: 20px;
-    border: 1px solid rgba(120, 180, 240, 0.3);
-    background: rgba(10, 20, 30, 0.5);
+    gap: 12px;
+    margin: 12px auto;
     max-width: 500px;
-    margin: 0 auto;
-    backdrop-filter: blur(6px);
-  }
-  .main-info .highlight {
-    color: #c0d8f0;
-    text-shadow: 0 0 12px rgba(120, 180, 240, 0.6);
-  }
-  .main-footer {
-    position: fixed;
-    bottom: 20px;
-    left: 0; right: 0;
-    text-align: center;
-    font-family: 'Courier New', monospace;
+    color: #4a1508;
     font-size: 10px;
-    letter-spacing: 4px;
-    color: #405a70;
-    text-transform: uppercase;
-    z-index: 2;
+    letter-spacing: 3px;
+  }
+  .footer-divider::before,
+  .footer-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #4a1508, transparent);
   }
 
-  #mainSnow {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 1;
+  /* === Адаптив === */
+  @media (max-width: 1100px) {
+    .main { grid-template-columns: 1fr; }
+    .radio-player, .clock-panel { position: static; }
+    .main.mode-chronos .clock-time { font-size: 80px; }
   }
-
   @media (max-width: 700px) {
-    .start-title { font-size: 28px; letter-spacing: 8px; }
-    .title-main { font-size: 36px; letter-spacing: 10px; }
-    .main-title { font-size: 32px; letter-spacing: 8px; }
-    .title-sub, .main-sub { font-size: 11px; letter-spacing: 4px; }
-    #skipBtn { top: 15px; right: 15px; padding: 8px 14px; font-size: 10px; }
-    .start-aquila { font-size: 40px; letter-spacing: 12px; }
+    .main.mode-chronos .clock-time { font-size: 48px; letter-spacing: 4px; }
+    .main.mode-chronos .clock-seconds { font-size: 22px; }
+    .main.mode-chronos .clock-date { font-size: 18px; }
+    .topbar { padding: 10px 15px; }
+    .logo { font-size: 14px; letter-spacing: 2px; }
+    .nav-link { padding: 6px 8px; font-size: 10px; }
+    .intro-log { font-size: 11px; }
+    .intro-final-title { font-size: 26px; letter-spacing: 6px; }
+    .footer-main { font-size: 13px; letter-spacing: 3px; }
+    .footer-sub { font-size: 10px; letter-spacing: 2px; }
   }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #0a0604; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(#8b0000, #4a1508); border: 1px solid #c9a227; }
 </style>
 </head>
 <body>
 
 <!-- ============================================
-     ЭКРАН СТАРТА — КЛИК ДЛЯ ЗАПУСКА
-     ============================================ -->
-<div id="startScreen">
-  <div class="start-aquila">❄</div>
-  <div class="start-title">Snow Queen</div>
-  <div class="start-sub">◈ Winter Realm — 2026 ◈</div>
-  <div class="start-hint">▶ Нажмите, чтобы начать</div>
-  <div class="start-author">Создано Krio Wertuk</div>
-</div>
-
-<!-- ============================================
-     ИНТРО
+     ИНТРО — ЗАГРУЗКА
      ============================================ -->
 <div id="intro">
-  <div id="bgLayer"></div>
-  <canvas id="snowCanvas"></canvas>
+  <div id="introCursor">▮</div>
 
-  <div id="introTitles">
-    <div class="title-main">Snow Queen</div>
-    <div class="title-sub">— Снежная Королева —</div>
-    <div class="title-author">Создано <span>Krio Wertuk</span></div>
+  <div id="introContent">
+    <div class="intro-title">◈ IMPERIUM BROADCAST SYSTEM ◈</div>
+    <div class="intro-divider"></div>
+
+    <div class="intro-log" id="introLog"></div>
+
+    <div class="intro-progress-wrap">
+      <div class="intro-progress-label">
+        <span id="introPhase">INITIALIZING</span>
+        <span id="introPercent">0%</span>
+      </div>
+      <div class="intro-progress-bar">
+        <div class="intro-progress-fill" id="introProgress"></div>
+      </div>
+    </div>
   </div>
 
-  <button id="skipBtn">⏭ Пропустить</button>
-
-  <div id="progressBar"><div id="progressFill"></div></div>
+  <div id="introFinal">
+    <div class="intro-final-title">AVE IMPERATOR</div>
+    <div class="intro-final-sub">— The Emperor Protects —</div>
+  </div>
 </div>
 
 <!-- ============================================
      ОСНОВНАЯ СТРАНИЦА
      ============================================ -->
-<div id="mainSite">
-  <canvas id="mainSnow"></canvas>
-  <div class="main-content">
-    <h1 class="main-title">Snow Queen</h1>
-    <div class="main-sub">◈ Winter Realm ◈</div>
-    <div class="main-info">
-      <div>Проект: <span class="highlight">SNOW QUEEN</span></div>
-      <div>Стиль: <span class="highlight">Dark Ambient · Drum and Bass · Russian Folk</span></div>
-      <div>Год: <span class="highlight">2026</span></div>
+<div id="pageContent">
+
+  <header class="topbar">
+    <div class="logo">IMPERIUM BROADCAST</div>
+    <nav class="topbar-right">
+      <button class="nav-link" data-view="home" id="navHome">Home</button>
+      <button class="nav-link active" data-view="vox" id="navVox">Vox Cast</button>
+      <button class="nav-link" data-view="chronos" id="navChronos">Chronos</button>
+    </nav>
+  </header>
+
+  <main class="main mode-vox" id="main">
+
+    <section class="panel radio-player">
+      <div class="panel-title">◈ VOX CASTRUM ◈</div>
+
+      <div class="player-display">
+        <div class="display-station" id="stationLabel">AWAITING SIGNAL</div>
+        <div class="display-name" id="trackName">— — —</div>
+        <div class="display-status" id="statusText">SIGNAL OFFLINE</div>
+      </div>
+
+      <select class="station-select" id="stationSelect">
+        <option value="">⚙ Select frequency ⚙</option>
+        <optgroup label="── AMBIENT / DOWNTEMPO ──">
+          <option value="https://ice1.somafm.com/groovesalad-128-mp3">Groove Salad</option>
+          <option value="https://ice1.somafm.com/dronezone-128-mp3">Drone Zone</option>
+          <option value="https://ice1.somafm.com/deepspaceone-128-mp3">Deep Space One</option>
+          <option value="https://ice1.somafm.com/spacestation-128-mp3">Space Station Soma</option>
+          <option value="https://ice1.somafm.com/synphaera-128-mp3">Synphaera Radio</option>
+          <option value="https://ice1.somafm.com/thedarkzone-128-mp3">The Dark Zone</option>
+          <option value="https://ice1.somafm.com/doomed-128-mp3">Doomed</option>
+          <option value="https://ice1.somafm.com/n5md-128-mp3">n5MD Radio</option>
+        </optgroup>
+        <optgroup label="── ELECTRONIC / IDM ──">
+          <option value="https://ice1.somafm.com/defcon-128-mp3">DEF CON Radio</option>
+          <option value="https://ice1.somafm.com/beatblender-128-mp3">Beat Blender</option>
+          <option value="https://ice1.somafm.com/cliqhop-128-mp3">cliqhop idm</option>
+          <option value="https://ice1.somafm.com/dubstep-128-mp3">Dub Step Beyond</option>
+          <option value="https://ice1.somafm.com/fluid-128-mp3">Fluid</option>
+          <option value="https://ice1.somafm.com/trip-128-mp3">The Trip</option>
+          <option value="https://ice1.somafm.com/poptron-128-mp3">PopTron</option>
+          <option value="https://ice1.somafm.com/vaporwaves-128-mp3">Vaporwaves</option>
+          <option value="https://ice1.somafm.com/digitalis-128-mp3">Digitalis</option>
+        </optgroup>
+        <optgroup label="── LOUNGE / JAZZ ──">
+          <option value="https://ice1.somafm.com/secretagent-128-mp3">Secret Agent</option>
+          <option value="https://ice1.somafm.com/illstreet-128-mp3">Illinois Street Lounge</option>
+          <option value="https://ice1.somafm.com/lush-128-mp3">Lush</option>
+          <option value="https://ice1.somafm.com/sonicuniverse-128-mp3">Sonic Universe</option>
+          <option value="https://ice1.somafm.com/bossa-128-mp3">Bossa Beyond</option>
+          <option value="https://ice1.somafm.com/tikitime-128-mp3">Tiki Time</option>
+          <option value="https://ice1.somafm.com/seveninch-128-mp3">Seven Inch Soul</option>
+        </optgroup>
+        <optgroup label="── ROCK / METAL ──">
+          <option value="https://ice1.somafm.com/indiepop-128-mp3">Indie Pop Rocks!</option>
+          <option value="https://ice1.somafm.com/u80s-128-mp3">Underground 80s</option>
+          <option value="https://ice1.somafm.com/leftcoast-128-mp3">Left Coast 70s</option>
+          <option value="https://ice1.somafm.com/metal-128-mp3">Metal Detector</option>
+          <option value="https://ice1.somafm.com/blackrock-128-mp3">Black Rock FM</option>
+          <option value="https://ice1.somafm.com/folkfwd-128-mp3">Folk Forward</option>
+          <option value="https://ice1.somafm.com/insound-128-mp3">The In-Sound</option>
+        </optgroup>
+        <optgroup label="── WORLD / OTHER ──">
+          <option value="https://ice1.somafm.com/suburbsofgoa-128-mp3">Suburbs of Goa</option>
+          <option value="https://ice1.somafm.com/bootliquor-128-mp3">Boot Liquor</option>
+          <option value="https://ice1.somafm.com/thistle-128-mp3">ThistleRadio</option>
+          <option value="https://ice1.somafm.com/reggae-128-mp3">Heavyweight Reggae</option>
+          <option value="https://ice1.somafm.com/missioncontrol-128-mp3">Mission Control</option>
+          <option value="https://ice1.somafm.com/covers-128-mp3">Covers</option>
+          <option value="https://ice1.somafm.com/specials-128-mp3">SomaFM Specials</option>
+          <option value="https://ice1.somafm.com/live-128-mp3">SomaFM Live</option>
+          <option value="https://ice1.somafm.com/chillits-128-mp3">Chillits Radio</option>
+        </optgroup>
+      </select>
+
+      <div class="player-controls">
+        <button class="ctrl-btn" id="playBtn">▶ PLAY</button>
+        <button class="ctrl-btn" id="stopBtn">■ STOP</button>
+      </div>
+
+      <div class="volume-row">
+        <span class="volume-label">VOL</span>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+      </div>
+
+      <div class="viz-panel">
+      <div class="viz-container">
+        <!-- ВАЖНО: положи файл aquila.jpg рядом с этим HTML или замени src на base64 -->
+        <img id="aquilaImg" src="https://i.pinimg.com/236x/cf/dc/25/cfdc251f5156fefe312ec76354447416.jpg" alt="Aquila Imperium"
+             onerror="this.style.opacity='0.15';this.alt='⚠ Положи aquila.jpg рядом с index.html';">
+        <canvas id="aquilaCanvas"></canvas>
+      </div>
+      <div class="viz-label" id="vizLabel">◈ AQUILA VISUALIZER OFFLINE ◈</div>
     </div>
-  </div>
-  <div class="main-footer">
-    ◈ 2026 — Создано Krio Wertuk ◈
-  </div>
+    </section>
+
+    <section class="panel center-panel">
+      <h1 class="center-title">Ave Imperator</h1>
+      <div class="center-sub">— M41 —</div>
+
+      <blockquote class="quote" id="quoteBox">
+        <div class="quote-text" id="quoteText">«В мрачной тьме далёкого будущего есть только война. Вечный мир — это ложь.»</div>
+        <div class="quote-author" id="quoteAuthor">— Warhammer 40,000</div>
+      </blockquote>
+
+      <div class="quote-nav">
+        <button id="prevQuote" title="Предыдущая цитата">◀</button>
+        <button id="autoToggle" class="auto-toggle active" title="Пауза / Воспроизведение">❚❚</button>
+        <button id="nextQuote" title="Следующая цитата">▶</button>
+      </div>
+
+      <div class="auto-indicator">
+        <span>Автосмена</span>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <span id="quoteCounter">1 / 120</span>
+      </div>
+    </section>
+
+    <section class="panel clock-panel">
+      <div class="panel-title">◈ CHRONOMETRON ◈</div>
+      <div class="clock-time" id="time">00:00</div>
+      <div class="clock-seconds" id="seconds">00 сек</div>
+      <div class="divider"></div>
+      <div class="clock-date" id="date">01.01.0001</div>
+      <div class="clock-day" id="day">Понедельник</div>
+      <div class="heresy">⚙ HERESY IS PURGED ⚙</div>
+    </section>
+
+  </main>
+
+  <!-- ============================================
+       ПОДВАЛ — ПОДПИСЬ
+       ============================================ -->
+  <footer class="footer">
+    <div class="footer-aquila">🦅 ⚙ 🦅</div>
+    <div class="footer-main">40М 2026</div>
+    <div class="footer-divider">◆ HERESY IS PURGED ◆</div>
+    <div class="footer-sub">
+      Создано <span class="signature">Krio Wertuk</span>
+    </div>
+  </footer>
+
 </div>
 
 <script>
-/* ============================================
-   ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-   ============================================ */
-const startScreen = document.getElementById('startScreen');
+/* ============ ИНТРО-ЗАГРУЗКА ============ */
+const INTRO_LOGS = [
+  { text: '> [BOOT] Imperium Broadcast System v40.M41', cls: 'info', delay: 0 },
+  { text: '> [BOOT] Инициализация когитатора...', cls: 'info', delay: 400 },
+  { text: '> [OK] Машинный дух пробуждён', cls: 'ok', delay: 800 },
+  { text: '> [BOOT] Проверка связи с Астрономиконом...', cls: 'info', delay: 1300 },
+  { text: '> [OK] Маяк Терры стабилен', cls: 'ok', delay: 1800 },
+  { text: '> [SCAN] Сканирование частот Варпа...', cls: 'info', delay: 2400 },
+  { text: '> [WARN] Обнаружены нечестивые сигнатуры в секторе 7-G', cls: 'warn', delay: 3000 },
+  { text: '> [OK] Аура Геллера активирована', cls: 'ok', delay: 3600 },
+  { text: '> [SCAN] Сканирование эфира SomaFM...', cls: 'info', delay: 4300 },
+  { text: '> [OK] Найдено 38 активных каналов', cls: 'ok', delay: 4900 },
+  { text: '> [LOAD] Загрузка Аквилы Империума...', cls: 'info', delay: 5600 },
+  { text: '> [OK] Священный орёл отрисован', cls: 'ok', delay: 6200 },
+  { text: '> [LOAD] Развёртывание визуализатора Вокс...', cls: 'info', delay: 6900 },
+  { text: '> [OK] Аудио-аура синхронизирована', cls: 'ok', delay: 7500 },
+  { text: '> [LOAD] Загрузка литаний Императора...', cls: 'info', delay: 8200 },
+  { text: '> [OK] 120 цитат готовы к передаче', cls: 'ok', delay: 8800 },
+  { text: '> [LOAD] Инициализация Хронометрона...', cls: 'info', delay: 9500 },
+  { text: '> [OK] Машинное время стабилизировано', cls: 'ok', delay: 10100 },
+  { text: '> [CHECK] Проверка целостности данных...', cls: 'info', delay: 10800 },
+  { text: '> [OK] Данные не повреждены скверной', cls: 'ok', delay: 11400 },
+  { text: '> [CHECK] Сканирование на ересь...', cls: 'info', delay: 12100 },
+  { text: '> [WARN] Обнаружены следы Хаоса — уровень 3', cls: 'warn', delay: 12700 },
+  { text: '> [OK] Контрмеры применены. Ересь искоренена', cls: 'ok', delay: 13400 },
+  { text: '> [FINAL] Проверка герметичности сектора...', cls: 'info', delay: 14100 },
+  { text: '> [OK] Сектор защищён. Готов к передаче', cls: 'ok', delay: 14700 },
+  { text: '> [FINAL] Подготовка канала связи...', cls: 'info', delay: 15400 },
+  { text: '> [OK] Канал открыт. Слава Императору!', cls: 'ok', delay: 16000 },
+  { text: '> [DONE] СИСТЕМА ГОТОВА', cls: 'error', delay: 16800 }
+];
+
 const intro = document.getElementById('intro');
-const mainSite = document.getElementById('mainSite');
-const skipBtn = document.getElementById('skipBtn');
-const bgLayer = document.getElementById('bgLayer');
-const introTitles = document.getElementById('introTitles');
-const progressBar = document.getElementById('progressBar');
+const introCursor = document.getElementById('introCursor');
+const introContent = document.getElementById('introContent');
+const introLog = document.getElementById('introLog');
+const introProgress = document.getElementById('introProgress');
+const introPercent = document.getElementById('introPercent');
+const introPhase = document.getElementById('introPhase');
+const introFinal = document.getElementById('introFinal');
+const pageContent = document.getElementById('pageContent');
+
+/* --- Фаза 1: пустой чёрный экран 3 сек, потом курсор --- */
+setTimeout(() => {
+  introCursor.classList.add('show');
+}, 3000);
+
+/* --- Фаза 2: через 2 сек после курсора (итого 5 сек) начинается загрузка --- */
+setTimeout(() => {
+  introContent.classList.add('show');
+  runIntroLogs();
+  runProgressBar();
+}, 5000);
+
+/* --- Логи интро по строкам --- */
+function runIntroLogs() {
+  INTRO_LOGS.forEach(item => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = 'line ' + item.cls;
+      line.textContent = item.text;
+      introLog.appendChild(line);
+
+      // Плавное появление
+      requestAnimationFrame(() => line.classList.add('show'));
+
+      // Прокрутка вниз
+      introLog.scrollTop = introLog.scrollHeight;
+    }, item.delay);
+  });
+}
+
+/* --- Прогресс-бар за 20 секунд --- */
+function runProgressBar() {
+  const totalDuration = 20000;
+  const startTime = Date.now();
+  const phases = [
+    { until: 15, label: 'INITIALIZING' },
+    { until: 30, label: 'CONNECTING TO ASTRONOMICON' },
+    { until: 45, label: 'SCANNING WARP FREQUENCIES' },
+    { until: 60, label: 'LOADING AQUILA IMPERIUM' },
+    { until: 75, label: 'DEPLOYING VOX VISUALIZER' },
+    { until: 90, label: 'PURGING HERESY' },
+    { until: 100, label: 'FINALIZING TRANSMISSION' }
+  ];
+
+  const timer = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const pct = Math.min((elapsed / totalDuration) * 100, 100);
+
+    introProgress.style.width = pct + '%';
+    introPercent.textContent = Math.floor(pct) + '%';
+
+    const phase = phases.find(p => pct <= p.until);
+    if (phase && introPhase.textContent !== phase.label) {
+      introPhase.textContent = phase.label;
+    }
+
+    if (pct >= 100) {
+      clearInterval(timer);
+      finishIntro();
+    }
+  }, 100);
+}
+
+/* --- Финал интро: показать AVE IMPERATOR, потом страницу --- */
+function finishIntro() {
+  setTimeout(() => {
+    introContent.style.opacity = '0';
+    introCursor.classList.remove('show');
+
+    setTimeout(() => {
+      introFinal.classList.add('show');
+
+      setTimeout(() => {
+        intro.classList.add('hidden');
+        pageContent.classList.add('show');
+
+        // Удаляем интро из DOM после исчезновения
+        setTimeout(() => {
+          intro.remove();
+        }, 1200);
+      }, 2500);
+    }, 600);
+  }, 800);
+}
+
+/* ============ ЧАСЫ ============ */
+const months = ['Января','Февраля','Марта','Апреля','Мая','Июня',
+                'Июля','Августа','Сентября','Октября','Ноября','Декабря'];
+const days = ['Воскресенье','Понедельник','Вторник','Среда',
+              'Четверг','Пятница','Суббота'];
+
+function pad(n) { return n < 10 ? '0' + n : n; }
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('time').textContent =
+    pad(now.getHours()) + ':' + pad(now.getMinutes());
+  document.getElementById('seconds').textContent =
+    pad(now.getSeconds()) + ' сек';
+  document.getElementById('date').textContent =
+    pad(now.getDate()) + '.' + pad(now.getMonth() + 1) + '.' + now.getFullYear();
+  document.getElementById('day').textContent =
+    days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ============ ВКЛАДКИ ============ */
+const main = document.getElementById('main');
+const navHome = document.getElementById('navHome');
+const navVox = document.getElementById('navVox');
+const navChronos = document.getElementById('navChronos');
+const allNavs = [navHome, navVox, navChronos];
+
+function setView(view) {
+  main.classList.remove('mode-home', 'mode-vox', 'mode-chronos');
+  main.classList.add('mode-' + view);
+  allNavs.forEach(btn => btn.classList.remove('active'));
+  if (view === 'home') navHome.classList.add('active');
+  if (view === 'vox') navVox.classList.add('active');
+  if (view === 'chronos') navChronos.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+navHome.addEventListener('click', () => setView('home'));
+navVox.addEventListener('click', () => setView('vox'));
+navChronos.addEventListener('click', () => setView('chronos'));
+
+/* ============ КОЛЛЕКЦИЯ ЦИТАТ ============ */
+const QUOTES = [
+  { text: "В мрачной тьме далёкого будущего есть только война. Вечный мир — это ложь. Есть только вечная бойня, и смех жаждущих богов.", author: "— Warhammer 40,000" },
+  { text: "Они будут моими лучшими воинами. Они будут моими Космическими Десантниками, и они не будут знать страха.", author: "— Император Человечества" },
+  { text: "Открытый разум подобен крепости, врата которой распахнуты, а стены неохраняемы.", author: "— Imperium M41" },
+  { text: "Безжалостность — доброта мудрого.", author: "— Максима М.41" },
+  { text: "Вопрос означает сомнение.", author: "— Максима М.41" },
+  { text: "Надежда — начало пути к горю.", author: "— Максима М.41" },
+  { text: "Кровь мучеников питает Империю.", author: "— Максима М.41" },
+  { text: "Безделье порождает ересь.", author: "— Максима М.41" },
+  { text: "Смерть — слуга добродетели.", author: "— Максима М.41" },
+  { text: "Сомнение — признак слабости.", author: "— Максима М.41" },
+  { text: "Служи Императору, пока ты жив.", author: "— Максима М.41" },
+  { text: "Оправдание — удел слабых.", author: "— Максима М.41" },
+  { text: "Благословен ум, в котором нет места сомнениям.", author: "— Максима М.41" },
+  { text: "Труд — тоже молитва.", author: "— Максима М.41" },
+  { text: "Страх отрицает веру.", author: "— Максима М.41" },
+  { text: "Искореняй ересь даже в душе своей.", author: "— Максима М.41" },
+  { text: "Никогда не забывай, ничего не прощай.", author: "— Максима М.41" },
+  { text: "Бояться следует только поражения.", author: "— Максима М.41" },
+  { text: "Лучше умереть за Императора, чем жить ради себя.", author: "— Максима М.41" },
+  { text: "Успех измеряется в крови: твоей или твоих врагов.", author: "— Максима М.41" },
+  { text: "Лишь смерть освобождает от службы.", author: "— Максима М.41" },
+  { text: "Никто из тех, кто умер за Него, не умер впустую.", author: "— Максима М.41" },
+  { text: "Знание — сила, защищай его.", author: "— Максима М.41" },
+  { text: "Духовное уродство в сто раз страшней телесного.", author: "— Максима М.41" },
+  { text: "Воспитай человека без веры и получишь разумного демона.", author: "— Максима М.41" },
+  { text: "Невинных нет, есть лишь разные степени вины.", author: "— Максима М.41" },
+  { text: "Разум, не имеющий цели, всегда будет блуждать в потёмках.", author: "— Максима М.41" },
+  { text: "Великодушие — признак слабости.", author: "— Максима М.41" },
+  { text: "Милосердие — признак слабости.", author: "— Максима М.41" },
+  { text: "Признать поражение — опозорить Императора.", author: "— Максима М.41" },
+  { text: "Ненависть — наибольший дар Императора человечеству.", author: "— Максима М.41" },
+  { text: "Молчание — знак согласия.", author: "— Максима М.41" },
+  { text: "Стойкость и молчание — вот высшие добродетели.", author: "— Максима М.41" },
+  { text: "Счастье — самообман слабых.", author: "— Максима М.41" },
+  { text: "Невежество — добродетель.", author: "— Максима М.41" },
+  { text: "Неси волю Императора как факел, разгоняй им тени.", author: "— Максима М.41" },
+  { text: "Император — это всё.", author: "— Максима М.41" },
+  { text: "Узкий взгляд лучше видит.", author: "— Максима М.41" },
+  { text: "Мудрый учится на фатальных ошибках других.", author: "— Максима М.41" },
+  { text: "Смельчак — это тот, кто знает всё, и ничего не боится.", author: "— Максима М.41" },
+  { text: "В труде ты обретёшь спасение.", author: "— Максима М.41" },
+  { text: "Умный человек всегда подозрителен.", author: "— Максима М.41" },
+  { text: "Смерть послужит тебе компасом.", author: "— Максима М.41" },
+  { text: "Да будут твои помыслы чисты.", author: "— Максима М.41" },
+  { text: "Те, кто ищут совершенства, не найдут покоя в этом мире.", author: "— Максима М.41" },
+  { text: "Без Него мы — ничто.", author: "— Максима М.41" },
+  { text: "Проклятие живёт вечно.", author: "— Максима М.41" },
+  { text: "Молитва очищает душу, а боль — тело.", author: "— Максима М.41" },
+  { text: "Терпение — признак слабости.", author: "— Максима М.41" },
+  { text: "Верный раб любит свою плеть.", author: "— Максима М.41" },
+  { text: "Ради настоящей цели стоит умереть.", author: "— Максима М.41" },
+  { text: "Я — гнев Императора. Я — Его карающая длань.", author: "— Космический Десантник" },
+  { text: "Имя нам — Легион. Крови нашей — Океан. Мы не боги и не титаны. Мы солдаты. Мы не умираем. Мы отправляемся в ад на перегруппировку.", author: "— Себастьян Яррик" },
+  { text: "Пока дышит хоть один космодесантник, Терра не может пасть.", author: "— Гарро" },
+  { text: "Я омываю свою форму в этой второй коже. Я — Железо. Я — Гнев. Я — Рок.", author: "— Обряд облачения" },
+  { text: "Мы были жестоко ранены. Но всё ещё стоим, с огнём в глазах и доблестью в сердцах.", author: "— Педро Кантор" },
+  { text: "Познай мутанта и убей его.", author: "— Имперская догма" },
+  { text: "Сожги еретика. Убей мутанта. Преследуй нечисть.", author: "— Имперская догма" },
+  { text: "Слово Императора — закон Империума.", author: "— Максима М.41" },
+  { text: "Глупец верит в удачу, мудрец верит в Императора.", author: "— Максима М.41" },
+  { text: "Мысль дня: Ненависть обогащает.", author: "— Максима М.41" },
+  { text: "Бремя провала — самое страшное наказание из всех.", author: "— Максима М.41" },
+  { text: "Ищи не награды, а довольства твоего Хозяина!", author: "— Максима М.41" },
+  { text: "Боль — иллюзия чувств, отчаяние — иллюзия разума.", author: "— Максима М.41" },
+  { text: "Не Ужасы Войны страшат меня, но невидимые Ужасы Мира.", author: "— Максима М.41" },
+  { text: "Единственная реакция на предательство — возмездие.", author: "— Максима М.41" },
+  { text: "Компромисс сродни предательству.", author: "— Максима М.41" },
+  { text: "Служи Императору сегодня — завтра ты можешь быть мёртв!", author: "— Максима М.41" },
+  { text: "Инакомыслящий побуждает только возмездие.", author: "— Максима М.41" },
+  { text: "Невежество — это счастье.", author: "— Максима М.41" },
+  { text: "Моя броня — презрение.", author: "— Максима М.41" },
+  { text: "Благословенны Изготовители Оружия.", author: "— Максима М.41" },
+  { text: "Чистота цели — в вере в Справедливость.", author: "— Максима М.41" },
+  { text: "Верный слуга учится любить плеть.", author: "— Максима М.41" },
+  { text: "Усердие не имеет замены.", author: "— Максима М.41" },
+  { text: "Знай свой долг!", author: "— Максима М.41" },
+  { text: "Подозрительный разум — здоровый разум.", author: "— Максима М.41" },
+  { text: "Благословен разум, слишком малый для сомнения.", author: "— Максима М.41" },
+  { text: "Только безумцы процветают.", author: "— Максима М.41" },
+  { text: "Горькие слёзы, которые роняют Боги, связывают нас с их сердцами.", author: "— Максима М.41" },
+  { text: "Усердие — его собственное оправдание.", author: "— Максима М.41" },
+  { text: "Награда за предательство — возмездие.", author: "— Максима М.41" },
+  { text: "Если ты не можешь хорошо говорить со своим Хозяином, то молчи!", author: "— Максима М.41" },
+  { text: "Воля Императора — сила Империума.", author: "— Максима М.41" },
+  { text: "Переговоры — капитуляция.", author: "— Максима М.41" },
+  { text: "Мощь присуща воле праведных.", author: "— Максима М.41" },
+  { text: "Следи за своей экипировкой!", author: "— Максима М.41" },
+  { text: "Вопрошающий слуга более опасен чем неосведомлённый еретик.", author: "— Максима М.41" },
+  { text: "Рассудок порождает сомнение, сомнение порождает ересь.", author: "— Максима М.41" },
+  { text: "Успокоение — проклятие.", author: "— Максима М.41" },
+  { text: "Тёмные мечты лежат на сердце.", author: "— Максима М.41" },
+  { text: "Надежда — начало несчастья.", author: "— Максима М.41" },
+  { text: "Победа не нуждается в оправдании; поражение оправдать невозможно.", author: "— Максима М.41" },
+  { text: "Нет большей славы, чем жизнь покорного служения.", author: "— Максима М.41" },
+  { text: "Мы связаны Кровью Мучеников.", author: "— Максима М.41" },
+  { text: "Острейший меч — праведная ненависть.", author: "— Максима М.41" },
+  { text: "Правосудие Императора — благословение для верующего.", author: "— Максима М.41" },
+  { text: "Слепая вера — убедительный мотив.", author: "— Максима М.41" },
+  { text: "Вера без дел ничего не стоит.", author: "— Максима М.41" },
+  { text: "Человек, который поёт молитвы Императору, будет говорить благословение все свои дни.", author: "— Максима М.41" },
+  { text: "Широкому разуму не достаёт фокуса.", author: "— Максима М.41" },
+  { text: "Дух пагубного Имматериума, изгоняю тебя именем Императора Человечества.", author: "— Дэн Абнетт" },
+  { text: "Из такой малой ереси вырастает великое вероотступничество.", author: "— Максимы Металики" },
+  { text: "Если враг спешит действовать, значит, служение наше вселяет в него страх.", author: "— Афоризмы" },
+  { text: "Нужное количество огня в нужном месте решает любые проблемы.", author: "— Коллоквиализм Металики" },
+  { text: "Береги щит разума, тем самым и тело твоё будет защищено.", author: "— Сентенция св. Евкельсия" },
+  { text: "Око Омниссии всегда наблюдает за нами.", author: "— Генерал-фабрикатор Плутонис" },
+  { text: "Даже смерть не избавляет нас от долга нашего.", author: "— Жития логиков святых" },
+  { text: "Закрой уши свои от слов ксеноса, дабы не повторить их по своему невежеству.", author: "— Архимагос Венарат Гелон" },
+  { text: "Порой на наши молитвы приходит ответ, но не такой, на какой мы надеялись.", author: "— Генерал-фабрикатор Кейн" },
+  { text: "Враг хочет сокрушить дух наш, ибо душа наша — сильнейшее наше оружие.", author: "— Амаламфиянам" },
+  { text: "Когда еретика заставляют замолчать, его лишают главного оружия.", author: "— Юпитерианские богослужения" },
+  { text: "Будущее безрадостно, когда дуют чёрные ветры ереси.", author: "— Левистианам" },
+  { text: "Обратись к недостойному знанию — встреть недостойную судьбу.", author: "— Заметки Махария" },
+  { text: "Берегитесь рукописей врага! Ибо письмена в них — семена скверны.", author: "— Криптман" },
+  { text: "Невозможно долго скрывать три вещи: солнце, луну и истину.", author: "— Старинная терранская пословица" },
+  { text: "Плоть слаба. Сдавайтесь и возродитесь в облике машин. Сдавайтесь и умрите.", author: "— Некроны" },
+  { text: "Пусть гнев Императора очистит наши души.", author: "— Warhammer 40,000 (3-я редакция)" },
+  { text: "Слабый разум — ясный разум.", author: "— Warhammer 40,000 (3-я редакция)" },
+  { text: "Простой разум легко наполняется Верой.", author: "— Warhammer 40,000 (3-я редакция)" },
+  { text: "Существует только Император, и Он — наш проводник и наш щит.", author: "— Warhammer 40,000 (3-я редакция)" },
+  { text: "Невиновность ничего не доказывает.", author: "— Warhammer 40,000 (3-я редакция)" },
+  { text: "Ни одна армия не достаточно сильна, чтобы завоевать галактику, но вера может перевернуть вселенную.", author: "— Warhammer 40,000 (3-я редакция)" },
+  { text: "Всякая терпимость — это предательство.", author: "— Warhammer 40,000 (3-я редакция)" }
+];
+
+const uniqueQuotes = [];
+const seen = new Set();
+for (const q of QUOTES) {
+  if (!seen.has(q.text)) {
+    seen.add(q.text);
+    uniqueQuotes.push(q);
+  }
+}
+
+let currentQuoteIndex = 0;
+const quoteBox = document.getElementById('quoteBox');
+const quoteText = document.getElementById('quoteText');
+const quoteAuthor = document.getElementById('quoteAuthor');
+const quoteCounter = document.getElementById('quoteCounter');
 const progressFill = document.getElementById('progressFill');
+const autoToggle = document.getElementById('autoToggle');
 
-const INTRO_DURATION = 248000; // 4 минуты 8 секунд = 248 секунд = 248000 мс
+let autoPlay = true;
+let progressTimer = null;
+const AUTO_INTERVAL = 8000;
 
-let audio = null;
+function displayQuote(index) {
+  quoteBox.classList.add('fading');
+  setTimeout(() => {
+    currentQuoteIndex = ((index % uniqueQuotes.length) + uniqueQuotes.length) % uniqueQuotes.length;
+    const q = uniqueQuotes[currentQuoteIndex];
+    quoteText.textContent = '«' + q.text + '»';
+    quoteAuthor.textContent = q.author;
+    quoteCounter.textContent = (currentQuoteIndex + 1) + ' / ' + uniqueQuotes.length;
+    quoteBox.classList.remove('fading');
+    resetProgress();
+  }, 400);
+}
+
+function resetProgress() {
+  if (progressTimer) clearInterval(progressTimer);
+  progressFill.style.width = '0%';
+  if (!autoPlay) return;
+
+  const start = Date.now();
+  progressTimer = setInterval(() => {
+    const elapsed = Date.now() - start;
+    const pct = Math.min((elapsed / AUTO_INTERVAL) * 100, 100);
+    progressFill.style.width = pct + '%';
+    if (pct >= 100) {
+      clearInterval(progressTimer);
+      displayQuote(currentQuoteIndex + 1);
+    }
+  }, 50);
+}
+
+function toggleAuto() {
+  autoPlay = !autoPlay;
+  if (autoPlay) {
+    autoToggle.textContent = '❚❚';
+    autoToggle.classList.add('active');
+    resetProgress();
+  } else {
+    autoToggle.textContent = '▶';
+    autoToggle.classList.remove('active');
+    if (progressTimer) clearInterval(progressTimer);
+    progressFill.style.width = '0%';
+  }
+}
+
+document.getElementById('prevQuote').addEventListener('click', () => displayQuote(currentQuoteIndex - 1));
+document.getElementById('nextQuote').addEventListener('click', () => displayQuote(currentQuoteIndex + 1));
+autoToggle.addEventListener('click', toggleAuto);
+
+quoteCounter.textContent = '1 / ' + uniqueQuotes.length;
+displayQuote(0);
+
+/* ============ ПЛЕЕР ============ */
+const audio = new Audio();
+audio.volume = 0.7;
+audio.crossOrigin = 'anonymous';
+
+const select = document.getElementById('stationSelect');
+const playBtn = document.getElementById('playBtn');
+const stopBtn = document.getElementById('stopBtn');
+const volumeSlider = document.getElementById('volumeSlider');
+const trackName = document.getElementById('trackName');
+const statusText = document.getElementById('statusText');
+const stationLabel = document.getElementById('stationLabel');
+const vizLabel = document.getElementById('vizLabel');
+
+let isPlaying = false;
+let metadataInterval = null;
+
+function startPlayback() {
+  if (!select.value) {
+    statusText.textContent = '⚠ SELECT FREQUENCY';
+    trackName.textContent = '— NO SIGNAL —';
+    return;
+  }
+  audio.src = select.value;
+  audio.load();
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      isPlaying = true;
+      playBtn.textContent = '❚❚ PAUSE';
+      statusText.textContent = '◈ TRANSMITTING ◈';
+      stationLabel.textContent = select.options[select.selectedIndex].text.toUpperCase();
+      trackName.textContent = '◈ ACQUIRING SIGNAL...';
+      vizLabel.classList.add('active');
+      vizLabel.textContent = '◈ AQUILA VISUALIZER ACTIVE ◈';
+    }).catch(() => {
+      statusText.textContent = '⚠ SIGNAL BLOCKED';
+      trackName.textContent = '— CONNECTION FAILED —';
+    });
+  }
+}
+
+function stopPlayback() {
+  audio.pause();
+  audio.src = '';
+  audio.load();
+  isPlaying = false;
+  playBtn.textContent = '▶ PLAY';
+  statusText.textContent = 'SIGNAL OFFLINE';
+  trackName.textContent = '— — —';
+  stationLabel.textContent = 'AWAITING SIGNAL';
+  vizLabel.classList.remove('active');
+  vizLabel.textContent = '◈ AQUILA VISUALIZER OFFLINE ◈';
+}
+
+playBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    playBtn.textContent = '▶ PLAY';
+    statusText.textContent = '◈ SIGNAL PAUSED ◈';
+  } else {
+    startPlayback();
+  }
+});
+
+stopBtn.addEventListener('click', stopPlayback);
+
+select.addEventListener('change', () => {
+  if (isPlaying) {
+    startPlayback();
+  } else {
+    statusText.textContent = '◈ FREQUENCY SET ◈';
+    stationLabel.textContent = select.options[select.selectedIndex].text.toUpperCase();
+  }
+});
+
+volumeSlider.addEventListener('input', () => {
+  audio.volume = volumeSlider.value / 100;
+});
+
+/* ============ ВИЗУАЛИЗАТОР ============ */
+const canvas = document.getElementById('aquilaCanvas');
+const ctx = canvas.getContext('2d');
+const aquilaImg = document.getElementById('aquilaImg');
+
 let audioCtx = null;
 let analyser = null;
 let source = null;
 let dataArray = null;
-let freqData = null;
 
-let snowAnim = null;
-let snowflakes = [];
-let snowdriftHeight = 0;
-let startTime = null;
-let introSkipped = false;
-
-/* Аудио-реактивные переменные */
-let audioLevels = {
-  bass: 0,
-  mid: 0,
-  treble: 0,
-  overall: 0
-};
-
-/* ============================================
-   ПРОВЕРКА ФЛАГА СЕССИИ
-   ============================================ */
-if (sessionStorage.getItem('snow-queen-intro-played') === '1') {
-  startScreen.style.display = 'none';
-  intro.style.display = 'none';
-  mainSite.classList.add('show');
-  startMainSnow();
-} else {
-  /* Ждём клика для старта */
-  startScreen.addEventListener('click', launchIntro, { once: true });
-  /* Также по любой клавише */
-  document.addEventListener('keydown', function startOnce(e) {
-    if (!audio) {
-      launchIntro();
-      document.removeEventListener('keydown', startOnce);
-    }
-  }, { once: true });
-}
-
-/* ============================================
-   ЗАПУСК ПОСЛЕ КЛИКА
-   ============================================ */
-function launchIntro() {
-  startScreen.classList.add('hidden');
-  setTimeout(() => { startScreen.style.display = 'none'; }, 1000);
-
-  /* Стартуем аудио и интро */
-  initAudio();
-  startIntroSequence();
-}
-
-/* ============================================
-   АУДИО + WEB AUDIO API (для реакции снега)
-   ============================================ */
-function initAudio() {
-  audio = new Audio('snow-queen.mp3');
-  audio.loop = false; // Играем один раз — 4:08
-  audio.volume = 0;
-  audio.crossOrigin = 'anonymous';
-
-  audio.play().catch(err => {
-    console.warn('Ошибка воспроизведения:', err);
-  });
-
-  /* Плавное нарастание громкости */
-  const targetVol = 0.75;
-  const duration = 3000;
-  const fadeStart = Date.now();
-
-  const fadeIn = setInterval(() => {
-    if (!audio) return;
-    const elapsed = Date.now() - fadeStart;
-    const progress = Math.min(elapsed / duration, 1);
-    audio.volume = targetVol * progress;
-    if (progress >= 1) clearInterval(fadeIn);
-  }, 50);
-
-  /* Настраиваем Web Audio API для реакции снега на музыку */
+function setupAnalyser() {
+  if (audioCtx) return;
   try {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.8;
-
+    analyser.smoothingTimeConstant = 0.85;
     source = audioCtx.createMediaElementSource(audio);
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
-
     dataArray = new Uint8Array(analyser.frequencyBinCount);
-    freqData = new Uint8Array(analyser.frequencyBinCount);
-
-    if (audioCtx.state === 'suspended') audioCtx.resume();
   } catch (e) {
-    console.warn('Web Audio API недоступен:', e);
+    console.warn('Audio visualization unavailable:', e);
   }
-
-  /* Обновляем прогресс-бар */
-  audio.addEventListener('timeupdate', () => {
-    if (audio.duration) {
-      const pct = (audio.currentTime / audio.duration) * 100;
-      progressFill.style.width = pct + '%';
-    }
-  });
-
-  /* Завершение трека — если интро ещё идёт, завершаем */
-  audio.addEventListener('ended', () => {
-    if (!introSkipped) finishIntro();
-  });
 }
 
-/* ============================================
-   АНАЛИЗ АУДИО — 3 ПОЛОСЫ (БАС / СЕРЕДИНА / ВЕРХ)
-   ============================================ */
-function analyzeAudio() {
-  if (!analyser || !dataArray) {
-    return { bass: 0, mid: 0, treble: 0, overall: 0 };
-  }
-
-  analyser.getByteFrequencyData(dataArray);
-
-  const len = dataArray.length;
-  const bassEnd = Math.floor(len * 0.1);   // 0–10% — бас
-  const midEnd = Math.floor(len * 0.5);    // 10–50% — середина
-  // 50–100% — верх
-
-  let bass = 0, mid = 0, treble = 0;
-
-  for (let i = 0; i < bassEnd; i++) bass += dataArray[i];
-  for (let i = bassEnd; i < midEnd; i++) mid += dataArray[i];
-  for (let i = midEnd; i < len; i++) treble += dataArray[i];
-
-  bass = (bass / bassEnd) / 255;
-  mid = (mid / (midEnd - bassEnd)) / 255;
-  treble = (treble / (len - midEnd)) / 255;
-
-  return {
-    bass: Math.min(bass * 1.8, 1),      // усиливаем бас
-    mid: Math.min(mid * 1.4, 1),
-    treble: Math.min(treble * 1.6, 1),
-    overall: Math.min((bass + mid + treble) / 3 * 1.5, 1)
-  };
-}
-
-/* ============================================
-   СНЕГ
-   ============================================ */
-const canvas = document.getElementById('snowCanvas');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-const SNOW_COUNT = 450;
-const WIND_BASE = 0.5;
-const GRAVITY_BASE = 0.4;
-
-const DRIFT = {
-  x: 0, y: 0,
-  width: 0, height: 0, maxHeight: 0,
-};
-
-function initDrift() {
-  DRIFT.width = window.innerWidth * 0.35;
-  DRIFT.maxHeight = window.innerHeight * 0.28;
-  DRIFT.y = window.innerHeight;
-  DRIFT.height = 0;
-}
-initDrift();
-window.addEventListener('resize', () => {
-  initDrift();
-  if (snowAnim) { snowflakes = []; createSnowflakes(); }
+audio.addEventListener('play', () => {
+  setupAnalyser();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 });
 
-function createSnowflakes() {
-  for (let i = 0; i < SNOW_COUNT; i++) {
-    snowflakes.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight - window.innerHeight,
-      size: 0.8 + Math.random() * 3.5,
-      speed: 0.5 + Math.random() * 1.8,
-      windOffset: (Math.random() - 0.5) * 0.8,
-      opacity: 0.3 + Math.random() * 0.7,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.01 + Math.random() * 0.03,
-      /* Скорость реакции на музыку — разная для каждой снежинки */
-      audioSensitivity: 0.5 + Math.random() * 1.5,
-    });
+let smoothedAmplitude = 0;
+
+function animateViz() {
+  requestAnimationFrame(animateViz);
+
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
   }
-}
 
-function drawSnowflake(s) {
-  ctx.globalAlpha = s.opacity;
-  ctx.fillStyle = '#e8f4ff';
-  ctx.shadowColor = 'rgba(180, 220, 255, 0.8)';
-  ctx.shadowBlur = s.size * 3;
-  ctx.beginPath();
-  ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.globalAlpha = 1;
-}
+  let amplitude = 0;
 
-function drawDrift() {
-  if (DRIFT.height < 1) return;
-  const baseY = window.innerHeight;
-  const topY = baseY - DRIFT.height;
-
-  ctx.beginPath();
-  ctx.moveTo(0, baseY);
-  ctx.lineTo(0, topY + DRIFT.height * 0.3);
-  const steps = 20;
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const x = t * DRIFT.width;
-    const h = DRIFT.height * Math.pow(1 - t, 1.6);
-    ctx.lineTo(x, baseY - h);
+  if (analyser && dataArray && isPlaying) {
+    analyser.getByteFrequencyData(dataArray);
+    let sum = 0;
+    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+    amplitude = (sum / dataArray.length) / 255;
+  } else {
+    const t = Date.now() / 2000;
+    amplitude = 0.05 + Math.sin(t) * 0.03;
   }
-  ctx.lineTo(DRIFT.width, baseY);
-  ctx.closePath();
 
-  const grad = ctx.createLinearGradient(0, topY, 0, baseY);
-  grad.addColorStop(0, 'rgba(240, 248, 255, 0.95)');
-  grad.addColorStop(0.5, 'rgba(220, 235, 250, 0.9)');
-  grad.addColorStop(1, 'rgba(180, 210, 240, 0.85)');
+  smoothedAmplitude = smoothedAmplitude * 0.85 + amplitude * 0.15;
+  const a = smoothedAmplitude;
 
-  ctx.fillStyle = grad;
-  ctx.shadowColor = 'rgba(180, 220, 255, 0.5)';
-  ctx.shadowBlur = 20;
-  ctx.fill();
-  ctx.shadowBlur = 0;
-}
+  if (aquilaImg) {
+    const scale = 1 + a * 0.08;
+    const brightness = 1 + a * 0.5;
+    const saturation = 1 + a * 0.3;
+    const glowSize = 18 + a * 45;
+    const glowOpacity = 0.4 + a * 0.6;
 
-/* ============================================
-   ЦИКЛ АНИМАЦИИ СНЕГА — С РЕАКЦИЕЙ НА МУЗЫКУ
-   ============================================ */
-function animateSnow() {
-  snowAnim = requestAnimationFrame(animateSnow);
+    aquilaImg.style.transform = `scale(${scale})`;
+    aquilaImg.style.filter =
+      `drop-shadow(0 0 ${glowSize}px rgba(255, 100, 0, ${glowOpacity})) ` +
+      `drop-shadow(0 0 ${glowSize * 0.6}px rgba(255, 0, 0, ${glowOpacity * 0.7})) ` +
+      `brightness(${brightness}) saturate(${saturation})`;
+  }
 
-  const w = canvas.width;
-  const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
+  const cx = w / 2;
+  const cy = h / 2;
 
-  /* Анализируем музыку */
-  const audio = analyzeAudio();
+  if (a > 0.08) {
+    const auraStrength = (a - 0.08) * 0.7;
+    const auraGrad = ctx.createRadialGradient(cx, cy, w * 0.15, cx, cy, w * 0.55);
+    auraGrad.addColorStop(0, `rgba(255, 100, 0, 0)`);
+    auraGrad.addColorStop(0.6, `rgba(255, 80, 0, ${auraStrength * 0.5})`);
+    auraGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+    ctx.fillStyle = auraGrad;
+    ctx.fillRect(0, 0, w, h);
+  }
 
-  /* Время + базовые колебания */
-  const t = (Date.now() - startTime) / 1000;
-  const baseWind = 0.5 + Math.sin(t * 0.3) * 1.0 + Math.sin(t * 0.7) * 0.4;
+  if (a > 0.15) {
+    const particleCount = Math.floor(a * 40);
+    for (let i = 0; i < particleCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = w * 0.28 + Math.random() * w * 0.22;
+      const px = cx + Math.cos(angle) * radius;
+      const py = cy + Math.sin(angle) * radius;
+      const r = 0.8 + Math.random() * 1.8;
 
-  /* ВЕТЕР РЕАГИРУЕТ НА МУЗЫКУ:
-     - треble (высокие) дают порывы — резкие движения в стороны
-     - mid добавляет общий сдвиг
-     - bass даёт "толчок" */
-  const musicWind = (audio.treble * 3.5) + (audio.mid * 1.2) + (audio.bass * 0.8);
-  const wind = baseWind + musicWind;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      const g = 120 + Math.random() * 135;
+      ctx.fillStyle = `rgba(255, ${Math.floor(g)}, 0, ${Math.random() * 0.7})`;
+      ctx.shadowColor = '#ff6600';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  }
 
-  /* Гравитация реагирует на бас — на ударах снег "тяжелеет" */
-  const gravity = GRAVITY_BASE + audio.bass * 1.2;
+  if (analyser && dataArray && isPlaying) {
+    const bars = 48;
+    const barW = w / bars;
+    const step = Math.floor(dataArray.length / bars);
 
-  /* Общая скорость падения растёт с громкостью */
-  const speedBoost = 1 + audio.overall * 0.8;
+    for (let i = 0; i < bars; i++) {
+      let sum = 0;
+      for (let j = 0; j < step; j++) {
+        sum += dataArray[i * step + j];
+      }
+      const v = (sum / step) / 255;
+      const barH = v * h * 0.12;
+      const x = i * barW;
+      const y = h - barH;
 
-  const introActive = !introSkipped && intro.style.display !== 'none';
+      const grad = ctx.createLinearGradient(0, h, 0, y);
+      grad.addColorStop(0, `rgba(139, 0, 0, ${0.7 + v * 0.3})`);
+      grad.addColorStop(0.5, `rgba(201, 162, 39, ${0.6 + v * 0.4})`);
+      grad.addColorStop(1, `rgba(255, 120, 0, ${0.5 + v * 0.5})`);
 
-  for (let i = snowflakes.length - 1; i >= 0; i--) {
-    const s = snowflakes[i];
-    if (!s) continue;
+      ctx.fillStyle = grad;
+      ctx.shadowColor = '#ff6600';
+      ctx.shadowBlur = 6 + v * 12;
+      ctx.fillRect(x + 1, y, barW - 2, barH);
+    }
+    ctx.shadowBlur = 0;
+  }
+}
 
-    /* Движение — комбинирует гравитацию, ветер, музыку и wobble */
-    s.y += s.speed * speedBoost * gravity + Math.sin(t * 0.4) * 0.2;
-    s.wobble += s.wobbleSpeed;
-    s.x += (wind * s.speed * s.audioSensitivity) + Math.sin(s.wobble) * 0.5 + s.windOffset;
+animateViz();
 
-    if (s.x > w + 10) s.x = -10;
-    if (s.x < -10) s.x = w + 10;
+/* ============ ICY METADATA ============ */
+async function fetchStreamTitle(streamUrl) {
+  try {
+    const response = await fetch(streamUrl, { headers: { 'Icy-MetaData': '1' } });
+    if (!response.ok) throw new Error('Stream unreachable');
+    const metaInt = response.headers.get('icy-metaint');
+    if (!metaInt) throw new Error('No ICY metadata');
 
-    /* Попадание в сугроб */
-    if (introActive && s.y > h - DRIFT.height * 0.3 && s.x < DRIFT.width * 0.9) {
-      const inDriftZone = s.x < DRIFT.width * (1 - (s.y - (h - DRIFT.height)) / DRIFT.height * 0.5);
-      if (inDriftZone && DRIFT.height < DRIFT.maxHeight) {
-        DRIFT.height += s.size * 0.15;
-        if (DRIFT.height > DRIFT.maxHeight) DRIFT.height = DRIFT.maxHeight;
-        snowflakes.splice(i, 1);
-        continue;
+    const reader = response.body.getReader();
+    let metadataBuffer = new Uint8Array(0);
+    let foundTitle = null;
+    let chunkCount = 0;
+
+    while (chunkCount < 50 && !foundTitle) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunkCount++;
+
+      const combined = new Uint8Array(metadataBuffer.length + value.length);
+      combined.set(metadataBuffer);
+      combined.set(value, metadataBuffer.length);
+      metadataBuffer = combined;
+
+      const metaIntNum = parseInt(metaInt, 10);
+      while (metadataBuffer.length >= metaIntNum + 1 && !foundTitle) {
+        const lengthByte = metadataBuffer[metaIntNum];
+        const metaLength = lengthByte * 16;
+        if (metadataBuffer.length >= metaIntNum + 1 + metaLength) {
+          const metadataChunk = metadataBuffer.slice(metaIntNum + 1, metaIntNum + 1 + metaLength);
+          const metaString = new TextDecoder('utf-8').decode(metadataChunk);
+          const match = metaString.match(/StreamTitle='([^']*)'/);
+          if (match && match[1]) foundTitle = match[1];
+          metadataBuffer = metadataBuffer.slice(metaIntNum + 1 + metaLength);
+        } else break;
       }
     }
+    reader.cancel();
+    return foundTitle;
+  } catch (e) { return null; }
+}
 
-    if (s.y > h + 10) {
-      s.y = -10;
-      s.x = Math.random() * w;
-      continue;
+function startMetadataPolling() {
+  if (metadataInterval) clearInterval(metadataInterval);
+  metadataInterval = setInterval(async () => {
+    if (!isPlaying || !select.value) return;
+    const title = await fetchStreamTitle(select.value);
+    if (title) {
+      trackName.textContent = title;
+      statusText.textContent = '◈ LIVE ◈';
+    } else {
+      trackName.textContent = '◈ IN THE GRIM DARKNESS ◈';
     }
-
-    drawSnowflake(s);
-  }
-
-  /* Восстанавливаем снежинки, пока идёт интро */
-  if (introActive && snowflakes.length < SNOW_COUNT) {
-    const toAdd = Math.min(5, SNOW_COUNT - snowflakes.length);
-    for (let i = 0; i < toAdd; i++) {
-      snowflakes.push({
-        x: Math.random() * w,
-        y: -10 - Math.random() * 50,
-        size: 0.8 + Math.random() * 3.5,
-        speed: 0.5 + Math.random() * 1.8,
-        windOffset: (Math.random() - 0.5) * 0.8,
-        opacity: 0.3 + Math.random() * 0.7,
-        wobble: Math.random() * Math.PI * 2,
-        wobbleSpeed: 0.01 + Math.random() * 0.03,
-        audioSensitivity: 0.5 + Math.random() * 1.5,
-      });
-    }
-  }
-
-  drawDrift();
+  }, 10000);
 }
 
-function startSnow() {
-  if (snowAnim) return;
-  snowflakes = [];
-  createSnowflakes();
-  animateSnow();
-}
-
-/* ============================================
-   ПОСЛЕДОВАТЕЛЬНОСТЬ ИНТРО (4:08)
-   ============================================ */
-function startIntroSequence() {
-  startTime = Date.now();
-
-  /* Фаза 1: чёрный экран 2 сек */
-  setTimeout(() => {
-    bgLayer.classList.add('show');
-    progressBar.classList.add('show');
-
-    /* Фаза 2: старт снега */
-    setTimeout(() => {
-      startSnow();
-      skipBtn.classList.add('show');
-    }, 500);
-
-    /* Фаза 3: титры (в конце — за 20 сек до конца трека) */
-    const titlesTime = INTRO_DURATION - 20000;
-    setTimeout(() => {
-      introTitles.classList.add('show');
-    }, titlesTime);
-
-    /* Фаза 4: полное завершение */
-    setTimeout(() => {
-      if (!introSkipped) finishIntro();
-    }, INTRO_DURATION);
-
-  }, 2000);
-}
-
-/* ============================================
-   SKIP
-   ============================================ */
-skipBtn.addEventListener('click', () => {
-  introSkipped = true;
-  finishIntro();
+audio.addEventListener('play', startMetadataPolling);
+audio.addEventListener('pause', () => {
+  if (metadataInterval) { clearInterval(metadataInterval); metadataInterval = null; }
 });
-
-/* ============================================
-   ЗАВЕРШЕНИЕ
-   ============================================ */
-function finishIntro() {
-  introSkipped = true;
-
-  /* Затухание звука */
-  if (audio) {
-    const fadeOutStart = audio.volume;
-    const fadeOutDuration = 1500;
-    const fadeOutStartTime = Date.now();
-
-    const fadeOut = setInterval(() => {
-      const elapsed = Date.now() - fadeOutStartTime;
-      const progress = Math.min(elapsed / fadeOutDuration, 1);
-      audio.volume = fadeOutStart * (1 - progress);
-      if (progress >= 1) {
-        clearInterval(fadeOut);
-        audio.pause();
-      }
-    }, 50);
-  }
-
-  intro.classList.add('hidden');
-  mainSite.classList.add('show');
-
-  sessionStorage.setItem('snow-queen-intro-played', '1');
-
-  setTimeout(() => {
-    intro.style.display = 'none';
-    if (snowAnim) cancelAnimationFrame(snowAnim);
-    snowAnim = null;
-    startMainSnow();
-  }, 1500);
-}
-
-/* ============================================
-   ФОНОВЫЙ СНЕГ НА ОСНОВНОЙ СТРАНИЦЕ
-   ============================================ */
-const mainSnowCanvas = document.getElementById('mainSnow');
-const mainCtx = mainSnowCanvas.getContext('2d');
-let mainSnowflakes = [];
-let mainSnowAnim = null;
-
-function startMainSnow() {
-  const resize = () => {
-    mainSnowCanvas.width = window.innerWidth;
-    mainSnowCanvas.height = window.innerHeight;
-  };
-  resize();
-  window.addEventListener('resize', resize);
-
-  mainSnowflakes = [];
-  for (let i = 0; i < 150; i++) {
-    mainSnowflakes.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      size: 0.5 + Math.random() * 2,
-      speed: 0.3 + Math.random() * 1,
-      opacity: 0.2 + Math.random() * 0.5,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.01 + Math.random() * 0.02,
-    });
-  }
-
-  let mainStart = Date.now();
-
-  function animateMain() {
-    mainSnowAnim = requestAnimationFrame(animateMain);
-    const w = mainSnowCanvas.width;
-    const h = mainSnowCanvas.height;
-    mainCtx.clearRect(0, 0, w, h);
-
-    const t = (Date.now() - mainStart) / 1000;
-    const wind = 0.4 + Math.sin(t * 0.2) * 0.6;
-
-    for (const s of mainSnowflakes) {
-      s.y += s.speed;
-      s.wobble += s.wobbleSpeed;
-      s.x += wind * s.speed + Math.sin(s.wobble) * 0.3;
-
-      if (s.y > h + 5) { s.y = -5; s.x = Math.random() * w; }
-      if (s.x > w + 5) s.x = -5;
-      if (s.x < -5) s.x = w + 5;
-
-      mainCtx.globalAlpha = s.opacity;
-      mainCtx.fillStyle = '#e8f4ff';
-      mainCtx.shadowColor = 'rgba(180, 220, 255, 0.6)';
-      mainCtx.shadowBlur = s.size * 2;
-      mainCtx.beginPath();
-      mainCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-      mainCtx.fill();
-    }
-    mainCtx.globalAlpha = 1;
-    mainCtx.shadowBlur = 0;
-  }
-  animateMain();
-}
+audio.addEventListener('error', () => {
+  statusText.textContent = '⚠ SIGNAL LOST';
+  trackName.textContent = '— CONNECTION FAILED —';
+  isPlaying = false;
+  playBtn.textContent = '▶ PLAY';
+});
 </script>
 
 </body>
 </html>
-
